@@ -7,8 +7,12 @@ import com.esri.ges.core.property.PropertyType;
 
 
 public class HtmlInboundAdapterDefinition extends JsonInboundAdapterDefinition {
-    public HtmlInboundAdapterDefinition(){
+    public HtmlInboundAdapterDefinition() throws PropertyException {
         super();
+
+        PropertyDefinition fields = new PropertyDefinition("fields", PropertyType.String, "", "Field name(s)", "Add comma-separated field names here", true, false);
+        propertyDefinitions.put(fields.getPropertyName(), fields);
+
 //        PropertyDefinition charSetValue = null;
 //        try {
 //            charSetValue = new PropertyDefinition("charSetValue", PropertyType.String, "", "Charset of the html", "Specify the charset of the html page", false, false);

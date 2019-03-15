@@ -1,21 +1,42 @@
 package com.esri.geoevent.solutions.adapter.html;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 public class InfoBeans {
 
+    String horseName;
+    Integer popularity;
     String date;
     String place;
+    String placeName;
     String weather;
     String raceName;
-    String horseNo;
+    Integer horseNo;
     String famous;
     String score;
     String jockey;
     String cycle;
     String situation;
     String time;
+
+    public String getHorseName() {
+        return horseName;
+    }
+
+    public void setHorseName(String horseName) {
+        this.horseName = horseName;
+    }
+
+    public Integer getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
+    }
 
     public String getDate() {
         return date;
@@ -31,6 +52,14 @@ public class InfoBeans {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 
     public String getWeather() {
@@ -49,11 +78,11 @@ public class InfoBeans {
         this.raceName = raceName;
     }
 
-    public String getHorseNo() {
+    public Integer getHorseNo() {
         return horseNo;
     }
 
-    public void setHorseNo(String horseNo) {
+    public void setHorseNo(Integer horseNo) {
         this.horseNo = horseNo;
     }
 
@@ -72,6 +101,7 @@ public class InfoBeans {
     public void setScore(String score) {
         this.score = score;
     }
+
     public String getJockey() {
         return jockey;
     }
@@ -103,18 +133,21 @@ public class InfoBeans {
     public void setTime(String time) {
         this.time = time;
     }
-    
-    public String getAllAsString (){
-        return date + " , " + place + " , " + weather + " , " + raceName + " , " + horseNo + " , " + famous + " , " + score + " , " + jockey + " , " + cycle + " , " + situation + " , " + time;
-    }
+
+//    public String getAllAsString (){
+//        return horseName + " , " + popularity + " , " + date + " , " + place + " , " + weather + " , " + raceName + " , " + horseNo + " , " + famous + " , " + score + " , " + jockey + " , " + cycle + " , " + situation + " , " + time;
+//    }
 
     public List<String> getAllAsList (){
         List<String> list = new LinkedList<>();
+        list.add(horseName);
+        list.add(String.valueOf(popularity));
         list.add(date);
         list.add(place);
+        list.add(placeName);
         list.add(weather);
         list.add(raceName);
-        list.add(horseNo);
+        list.add(String.valueOf(horseNo));
         list.add(famous);
         list.add(score);
         list.add(jockey);

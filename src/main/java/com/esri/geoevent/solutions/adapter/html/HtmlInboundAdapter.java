@@ -23,7 +23,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -42,6 +44,7 @@ import com.esri.ges.core.component.ComponentException;
 public class HtmlInboundAdapter extends JsonInboundAdapter {
     static final private Log log = LogFactory.getLog(HtmlInboundAdapter.class);
     private String charSetValue;
+    static List<String> fields = new ArrayList<>();
 
     public HtmlInboundAdapter(AdapterDefinition adapterDefinition) throws ComponentException {
         super(adapterDefinition);
@@ -49,8 +52,10 @@ public class HtmlInboundAdapter extends JsonInboundAdapter {
 
     @Override
     public void afterPropertiesSet() {
-//        charSetValue = properties.get("charSetValue;").getValueAsString();
         super.afterPropertiesSet();
+        String rawFields = properties.get("fields").getValueAsString();
+        fields = Arrays.asList(rawFields.split(","));
+        charSetValue = properties.get("charSetValue;").getValueAsString();
     }
 
     private Charset otherCharSet = Charset.forName("euc-jp");
@@ -58,51 +63,44 @@ public class HtmlInboundAdapter extends JsonInboundAdapter {
 
     @Override
     public void receive(ByteBuffer buf, String str) {
+        // Here write codes which would be neccessary for GeoEvent data processing
+        // Do not write any codes here about how the content of HTML should be parsed
         ByteBuffer bb = buf;
         CharSequence charseq = decode(buf);
         String charseqToString = charseq.toString();
 
-        List<InfoBeans> result = new ArrayList<>();
-
         try {
+            // URL to be used for this sample "https://db.netkeiba.com/?pid=horse_top"
+            // Pass the HTML string to the method which covers how to parse the HTML
             HtmlParser hp = new HtmlParser();
-            result = hp.parseHTML(charseqToString);
+            // Get the result from HtmlParser in List
+            String result = hp.parseHTML(charseqToString, fields);
 
-            ObjectMapper mapper = new ObjectMapper();
-            ArrayNode newArrayNode = mapper.createArrayNode();
+//            for (int i = 0; i < result.size(); i++) {
+//                // ObjectNode to add each Json object
+//                ObjectNode newJsonNode = mapper.createObjectNode();
+//
+//                // Put an arbitrary name of Json key and Json value from HtmlParser's result
+//                newJsonNode.put("horseName", result.get(i).getHorseName());
+//                newJsonNode.put("popularity", result.get(i).getPopularity());
+//                newJsonNode.put("date", result.get(i).getDate().toString());
+//                newJsonNode.put("place", result.get(i).getPlace());
+//                newJsonNode.put("placeName", result.get(i).getPlaceName());
+//                newJsonNode.put("weather", result.get(i).getWeather());
+//                newJsonNode.put("raceName", result.get(i).getRaceName());
+//                newJsonNode.put("horseNo", result.get(i).getHorseNo());
+//                newJsonNode.put("famous", result.get(i).getFamous());
+//                newJsonNode.put("score", result.get(i).getScore());
+//                newJsonNode.put("jockey", result.get(i).getJockey());
+//                newJsonNode.put("cycle", result.get(i).getCycle());
+//                newJsonNode.put("situation", result.get(i).getSituation());
+//                newJsonNode.put("time", result.get(i).getTime());
+//                // Add each Json node to ArrayNode
+//                newJsonArrayNode.add(newJsonNode);
+//            }
 
-            List<String> values = result.stream().flatMap(bean -> bean.getAllAsList().stream()).collect(Collectors.toList());
-
-            for (int i = 0; i < result.size(); i++) {
-                ObjectNode newItemNode = mapper.createObjectNode();
-
-                newItemNode.put("date", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("place", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("weather", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("raceName", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("horseNo", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("famous", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("score", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("jockey", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("cycle", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("situation", values.get(i++));
-                newArrayNode.add(newItemNode);
-                newItemNode.put("time", values.get(i));
-                newArrayNode.add(newItemNode);
-            }
-
-            String newJsonString = JsonConverter.toString(newArrayNode);
-
-            bb = encode(newJsonString);
+            // Encode the string and pass it onto the super class (Generic Json Adapter)
+            bb = encode(result);
             super.receive(bb, str);
 
         } catch (JsonGenerationException e) {
