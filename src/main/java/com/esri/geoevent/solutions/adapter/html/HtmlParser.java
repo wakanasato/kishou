@@ -1,9 +1,5 @@
 package com.esri.geoevent.solutions.adapter.html;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -12,27 +8,26 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.swing.text.html.HTML;
 import java.io.IOException;
 
-import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class HtmlParser  {
 
-    public static void main(String[] args) throws IOException {
-        HtmlParser p = new HtmlParser();
-        String test = "horseName,popularity,date,place,placeName,weather,raceName,horseNo,famous,score,jockey,cycle,situation,time";
-        List<String> fields = new ArrayList<>(Arrays.asList(test.split(",")));
-
-        p.parseHTML(test, fields);
-    }
+//    public static void main(String[] args) throws IOException {
+//        HtmlParser p = new HtmlParser();
+//        String test = "horseName,popularity,date,place,placeName,weather,raceName,horseNo,famous,score,jockey,cycle,situation,time,url";
+//        List<String> fields = new ArrayList<>(Arrays.asList(test.split(",")));
+//
+//        p.parseHTML(test, fields);
+//    }
 
     // Write codes below to determine how the HTML should be parsed
     String parseHTML(String html, List fileds) throws IOException {
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         //実行時間計測用
         long start = System.currentTimeMillis();
         List<String> fields = fileds;
@@ -42,8 +37,8 @@ public class HtmlParser  {
 
         try {
             // Get a document object from Html that is passed from the method's argument
-            Document doc = Jsoup.connect("https://db.netkeiba.com/?pid=horse_top").get();
-
+//            Document doc = Jsoup.parse(html);
+            Document doc = Jsoup.connect("https://db.netkeiba.com/?pid=horse_hitchart").get();
             // Define the base URL to which a query parameter will be appended
             String baseUrl = "https://db.netkeiba.com";
             // Extract the elements with "a" tag
@@ -90,30 +85,40 @@ public class HtmlParser  {
 
                         String hairetsu[] = str.split(" ");
                         InfoBeans bean = new InfoBeans();
-                        bean.setHorseName(urlParam.get(i).text());
-                        bean.setPopularity(i + 1);
-                        bean.setDate(hairetsu[0]);
-                        bean.setPlace(hairetsu[1]);
-                        bean.setPlaceName(hairetsu[1].substring(1, 3));
-                        bean.setWeather(hairetsu[2]);
-                        bean.setRaceName(hairetsu[4]);
-                        bean.setHorseNo(Integer.parseInt(hairetsu[7]));
-                        bean.setFamous(hairetsu[9]);
-                        bean.setScore(hairetsu[10]);
-                        bean.setJockey(hairetsu[11]);
-                        bean.setCycle(hairetsu[13]);
-                        bean.setSituation(hairetsu[14]);
-                        bean.setTime(hairetsu[16]);
-
+                        try {
+                            bean.setHorseName(urlParam.get(i).text());
+                            bean.setPopularity(i + 1);
+                            bean.setDate(sdf.parse(hairetsu[0]));
+                            bean.setStringDate((hairetsu[0]));
+                            bean.setPlace(hairetsu[1]);
+                            bean.setPlaceName(hairetsu[1].substring(1, 3));
+                            bean.setWeather(hairetsu[2]);
+                            bean.setRaceName(hairetsu[4]);
+                            bean.setHorseNo(Integer.parseInt(hairetsu[7]));
+                            bean.setFamous(hairetsu[9]);
+                            bean.setScore(hairetsu[10]);
+                            bean.setJockey(hairetsu[11]);
+                            bean.setCycle(hairetsu[13]);
+                            bean.setSituation(hairetsu[14]);
+                            bean.setTime(hairetsu[16]);
+                            bean.setURL(newUrl);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println(Arrays.asList(hairetsu));
+                            System.out.println(hairetsu.length);
+                        }
+//                      配列の中身をセットした InfoBean クラスを Json オブジェクトに変換
                         ObjectNode json = JsonConverter.toJsonObject(bean);
+//                      なんか勝手に allAsList というのが Json に作られるので削除
                         json.remove("allAsList");
+//                      Json オブジェクトを Json 配列に追加していく
                         newJsonArrayNode.add(json);
                     }
                 }
             }
 
             //例外処理
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
         //実行時間計測用

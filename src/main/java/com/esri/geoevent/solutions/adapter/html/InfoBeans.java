@@ -7,20 +7,22 @@ import java.util.List;
 
 public class InfoBeans {
 
-    String horseName;
-    Integer popularity;
-    String date;
-    String place;
-    String placeName;
-    String weather;
-    String raceName;
-    Integer horseNo;
-    String famous;
-    String score;
-    String jockey;
-    String cycle;
-    String situation;
-    String time;
+    private String horseName;
+    private Integer popularity;
+    private Date date;
+    private String stringDate;
+    private String place;
+    private String placeName;
+    private String weather;
+    private String raceName;
+    private Integer horseNo;
+    private String famous;
+    private String score;
+    private String jockey;
+    private String cycle;
+    private String situation;
+    private String time;
+    private String URL;
 
     public String getHorseName() {
         return horseName;
@@ -38,12 +40,20 @@ public class InfoBeans {
         this.popularity = popularity;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getStringDate() {
+        return stringDate;
+    }
+
+    public void setStringDate(String stringDate) {
+        this.stringDate = stringDate;
     }
 
     public String getPlace() {
@@ -134,6 +144,14 @@ public class InfoBeans {
         this.time = time;
     }
 
+    public String getURL() {
+        return URL;
+    }
+
+    public void setURL(String URL) {
+        this.URL = URL;
+    }
+
 //    public String getAllAsString (){
 //        return horseName + " , " + popularity + " , " + date + " , " + place + " , " + weather + " , " + raceName + " , " + horseNo + " , " + famous + " , " + score + " , " + jockey + " , " + cycle + " , " + situation + " , " + time;
 //    }
@@ -142,7 +160,7 @@ public class InfoBeans {
         List<String> list = new LinkedList<>();
         list.add(horseName);
         list.add(String.valueOf(popularity));
-        list.add(date);
+        list.add(date.toString());
         list.add(place);
         list.add(placeName);
         list.add(weather);
