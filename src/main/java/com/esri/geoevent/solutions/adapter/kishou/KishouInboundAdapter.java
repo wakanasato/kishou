@@ -13,7 +13,15 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-package com.esri.geoevent.solutions.adapter.html;
+package com.esri.geoevent.solutions.adapter.kishou;
+
+import com.esri.ges.adapter.AdapterDefinition;
+import com.esri.ges.adapter.genericJson.JsonInboundAdapter;
+import com.esri.ges.core.component.ComponentException;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,28 +33,14 @@ import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.esri.ges.adapter.genericJson.JsonInboundAdapter;
-import com.esri.ges.adapter.AdapterDefinition;
-import com.esri.ges.core.component.ComponentException;
 
 
-public class HtmlInboundAdapter extends JsonInboundAdapter {
-    static final private Log log = LogFactory.getLog(HtmlInboundAdapter.class);
+public class KishouInboundAdapter extends JsonInboundAdapter {
+    static final private Log log = LogFactory.getLog(KishouInboundAdapter.class);
     private String charSetValue;
     static List<String> fields = new ArrayList<>();
 
-    public HtmlInboundAdapter(AdapterDefinition adapterDefinition) throws ComponentException {
+    public KishouInboundAdapter(AdapterDefinition adapterDefinition) throws ComponentException {
         super(adapterDefinition);
     }
 
@@ -72,32 +66,9 @@ public class HtmlInboundAdapter extends JsonInboundAdapter {
         try {
             // URL to be used for this sample "https://db.netkeiba.com/?pid=horse_top"
             // Pass the HTML string to the method which covers how to parse the HTML
-            HtmlParser hp = new HtmlParser();
+            XmlParser hp = new XmlParser();
             // Get the result from HtmlParser in List
-            String result = hp.parseHTML(charseqToString, fields);
-
-//            for (int i = 0; i < result.size(); i++) {
-//                // ObjectNode to add each Json object
-//                ObjectNode newJsonNode = mapper.createObjectNode();
-//
-//                // Put an arbitrary name of Json key and Json value from HtmlParser's result
-//                newJsonNode.put("horseName", result.get(i).getHorseName());
-//                newJsonNode.put("popularity", result.get(i).getPopularity());
-//                newJsonNode.put("date", result.get(i).getDate().toString());
-//                newJsonNode.put("place", result.get(i).getPlace());
-//                newJsonNode.put("placeName", result.get(i).getPlaceName());
-//                newJsonNode.put("weather", result.get(i).getWeather());
-//                newJsonNode.put("raceName", result.get(i).getRaceName());
-//                newJsonNode.put("horseNo", result.get(i).getHorseNo());
-//                newJsonNode.put("famous", result.get(i).getFamous());
-//                newJsonNode.put("score", result.get(i).getScore());
-//                newJsonNode.put("jockey", result.get(i).getJockey());
-//                newJsonNode.put("cycle", result.get(i).getCycle());
-//                newJsonNode.put("situation", result.get(i).getSituation());
-//                newJsonNode.put("time", result.get(i).getTime());
-//                // Add each Json node to ArrayNode
-//                newJsonArrayNode.add(newJsonNode);
-//            }
+            String result = hp.parseHTML(charseqToString);
 
             // Encode the string and pass it onto the super class (Generic Json Adapter)
             bb = encode(result);

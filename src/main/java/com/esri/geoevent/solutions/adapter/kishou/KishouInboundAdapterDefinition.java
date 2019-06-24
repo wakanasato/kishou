@@ -1,17 +1,15 @@
-package com.esri.geoevent.solutions.adapter.html;
+package com.esri.geoevent.solutions.adapter.kishou;
 
 import com.esri.ges.adapter.genericJson.JsonInboundAdapterDefinition;
-import com.esri.ges.core.property.PropertyDefinition;
 import com.esri.ges.core.property.PropertyException;
-import com.esri.ges.core.property.PropertyType;
 
 
-public class HtmlInboundAdapterDefinition extends JsonInboundAdapterDefinition {
-    public HtmlInboundAdapterDefinition() throws PropertyException {
+public class KishouInboundAdapterDefinition extends JsonInboundAdapterDefinition {
+    public KishouInboundAdapterDefinition() throws PropertyException {
         super();
 
-        PropertyDefinition fields = new PropertyDefinition("fields", PropertyType.String, "", "Field name(s)", "Add comma-separated field names here", true, false);
-        propertyDefinitions.put(fields.getPropertyName(), fields);
+//        PropertyDefinition fields = new PropertyDefinition("fields", PropertyType.String, "", "Field name(s)", "Add comma-separated field names here", true, false);
+//        propertyDefinitions.put(fields.getPropertyName(), fields);
 
 //        PropertyDefinition charSetValue = null;
 //        try {
@@ -32,12 +30,12 @@ public class HtmlInboundAdapterDefinition extends JsonInboundAdapterDefinition {
 
     @Override
     public String getName() {
-        return "HTML-Adapter";
+        return "KishouXML-Adapter";
     }
 
     @Override
     public String getLabel() {
-        return "HTML Inbound Adapter";
+        return "Kishou XML Adapter";
     }
 
     @Override
@@ -47,6 +45,6 @@ public class HtmlInboundAdapterDefinition extends JsonInboundAdapterDefinition {
 
     @Override
     public String getDescription() {
-        return "Extract data from an HTML page";
+        return "Extract data from Kishou XML";
     }
 }
