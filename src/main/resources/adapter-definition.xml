@@ -1,0 +1,18 @@
+<adapter
+        name="KishouXML-Adapter"
+        label="気象 XML アダプター"
+        domain="com.esri.geoevent.adapter.inbound" type="inbound">
+    <description>気象 XML エンドポイントからデータを取得するためのコネクターです</description>
+    <propertyDefinitions>
+        <propertyDefinition propertyName="region"
+                            label="データ取得区域"
+                            description="データ取得区域"
+                            propertyType="String" defaultValue="気象警報・注意報（市町村等）" mandatory="false"
+                            readOnly="false"/>
+        <propertyDefinition propertyName="infoType"
+                            label="情報種"
+                            description="情報種"
+                            propertyType="String" defaultValue="気象警報・注意報" mandatory="false"
+                            readOnly="false"/>
+    </propertyDefinitions>
+</adapter>

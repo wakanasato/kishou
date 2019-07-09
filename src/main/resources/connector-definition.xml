@@ -1,0 +1,23 @@
+<connectorDefinition
+        label="気象 XML コネクター"
+        name="esrij-in-kishou" type="inbound">
+    <description>気象XML エンドポイントからデータを取得するためのコネクターです</description>
+    <defaultName>kishou-xml-in</defaultName>
+    <adapter uri="com.esri.geoevent.adapter.inbound/KishouXML-Adapter/10.7.0"/>
+    <transport uri="com.esri.ges.transport.inbound/HTTP/10.7.1" />
+    <properties>
+        <shown>
+            <property name="region" label="情報取得区域" default="気象警報・注意報（市町村等）" source="adapter" />
+            <property name="clientURL" label="エンドポイントの URL" default="http://www.data.jma.go.jp/developer/xml/feed/extra.xml" source="transport" />
+            <property name="infoType" label="取得情報種" default="気象警報・注意報" source="adapter" />
+            <property name="frequency" label="情報取得頻度" default="30" source="transport" />
+        </shown>
+        <advanced>
+            <property name="CreateGeoEventDefinition" label="ジオイベント定義を作成" default="" source="adapter" />
+            <property name="ExistingGeoEventDefinitionName" label="既存のジオイベント定義" default="" source="adapter" />
+            <property name="NewGeoEventDefinitionName" label="新規ジオイベント定義" default="false" source="adapter" />
+        </advanced>
+        <hidden>
+        </hidden>
+    </properties>
+</connectorDefinition>

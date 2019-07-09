@@ -13,17 +13,29 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-package com.esri.geoevent.solutions.adapter.kishou;
+package com.esri.geoevent.adapter.kishou;
 
 import com.esri.ges.adapter.Adapter;
 import com.esri.ges.adapter.genericJson.JsonInboundAdapterService;
+import com.esri.ges.adapter.util.XmlAdapterDefinition;
 import com.esri.ges.core.component.ComponentException;
 import com.esri.ges.core.property.PropertyException;
+
+import javax.xml.bind.JAXBException;
 
 public class KishouInboundAdapterService extends JsonInboundAdapterService {
     public KishouInboundAdapterService() throws PropertyException {
         super();
-        definition = new KishouInboundAdapterDefinition();
+        XmlAdapterDefinition xmlAdapterDefinition = new XmlAdapterDefinition(getResourceAsStream("adapter-definition.xml"));
+        try
+        {
+            xmlAdapterDefinition.loadConnector(getResourceAsStream("connector-definition.xml"));
+        }
+        catch (JAXBException e)
+        {
+            throw new RuntimeException(e);
+        }
+        definition = xmlAdapterDefinition;
     }
 
     @Override
