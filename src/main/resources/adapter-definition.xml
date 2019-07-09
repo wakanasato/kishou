@@ -15,4 +15,21 @@
                             propertyType="String" defaultValue="気象警報・注意報" mandatory="false"
                             readOnly="false"/>
     </propertyDefinitions>
+    <geoEventDefinitions>
+        <geoEventDefinition name="Kishou-XML">
+            <fieldDefinitions>
+                <fieldDefinition name="areaName" type="String"/>
+                <fieldDefinition name="regioncode" type="String">
+                    <fieldDefinitionTag>
+                        <name>TRACK_ID</name>
+                    </fieldDefinitionTag>
+                </fieldDefinition>
+                <fieldDefinition name="lightningCode" type="Integer"/>
+                <fieldDefinition name="heavyrainCode" type="Integer"/>
+                <fieldDefinition name="floodCode" type="Integer"/>
+                <fieldDefinition name="strongwingCode" type="Integer"/>
+                <fieldDefinition name="flogCode" type="Integer"/>
+            </fieldDefinitions>
+        </geoEventDefinition>
+    </geoEventDefinitions>
 </adapter>

@@ -1,15 +1,14 @@
 package com.esri.geoevent.adapter.kishou;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
@@ -24,15 +23,14 @@ public class XmlParser {
         p.parseHTML(xml);
     }
 
-    String parseHTML(String xml) throws IOException {
+    List<JsonNode> parseHTML(String xml) {
 ////        System.out.println(System.getProperty("file.encoding"));
 //        String url = "http://www.data.jma.go.jp/developer/xml/feed/extra.xml";
 ////        Jsoup が使う文字コードは実行環境依存みたいなので、ここでちゃんと UTF-8 を使うように指定する (pom に文字コードを記述すれば大丈夫だった)
 //        Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url);
 
         InfoBeans bean = new InfoBeans();
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode newJsonArrayNode = mapper.createArrayNode();
+        List<JsonNode> jsonNodes = new ArrayList<>();
 
         try {
 //            トランスポートから渡されてデコードされた XML 文字列を Document オブジェクトにパースする
@@ -63,8 +61,8 @@ public class XmlParser {
 //                                値をセットしていく（他の Information type でも使えるようにメソッド化）
                                 setValue(bean, area, kind);
 //                                セットした値を Json にして、Json 配列に追加していく
-                                ObjectNode json = JsonConverter.toJsonObject(bean);
-                                newJsonArrayNode.add(json);
+                                JsonNode json = JsonConverter.toJsonObject(bean);
+                                jsonNodes.add(json);
                             }
                         case "気象警報・注意報（警報注意報種別毎）":
                         case "気象警報・注意報（府県予報区等）":
@@ -77,10 +75,12 @@ public class XmlParser {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        Json オブジェクトの配列を文字列化して、Adapter に返す
-        String result = newJsonArrayNode.toString();
-        System.out.println("取得したレコード数は " + newJsonArrayNode.size() + " 件です");
-        return result;
+//        Json オブジェクトの配列を、Adapter に返す
+
+
+//        String result = jsonNodes.toString();
+        System.out.println("取得したレコード数は " + jsonNodes.size() + " 件です");
+        return jsonNodes;
     }
 
     private List<String> getLinks(Document doc, String type) {

@@ -16,16 +16,15 @@
 package com.esri.geoevent.adapter.kishou;
 
 import com.esri.ges.adapter.Adapter;
-import com.esri.ges.adapter.genericJson.JsonInboundAdapterService;
+import com.esri.ges.adapter.AdapterServiceBase;
 import com.esri.ges.adapter.util.XmlAdapterDefinition;
 import com.esri.ges.core.component.ComponentException;
 import com.esri.ges.core.property.PropertyException;
 
 import javax.xml.bind.JAXBException;
 
-public class KishouInboundAdapterService extends JsonInboundAdapterService {
+public class KishouInboundAdapterService extends AdapterServiceBase {
     public KishouInboundAdapterService() throws PropertyException {
-        super();
         XmlAdapterDefinition xmlAdapterDefinition = new XmlAdapterDefinition(getResourceAsStream("adapter-definition.xml"));
         try
         {

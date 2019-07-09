@@ -13,9 +13,6 @@
             <property name="frequency" label="情報取得頻度" default="30" source="transport" />
         </shown>
         <advanced>
-            <property name="CreateGeoEventDefinition" label="ジオイベント定義を作成" default="" source="adapter" />
-            <property name="ExistingGeoEventDefinitionName" label="既存のジオイベント定義" default="" source="adapter" />
-            <property name="NewGeoEventDefinitionName" label="新規ジオイベント定義" default="false" source="adapter" />
         </advanced>
         <hidden>
         </hidden>

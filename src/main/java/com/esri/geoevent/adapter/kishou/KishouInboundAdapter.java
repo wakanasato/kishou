@@ -16,8 +16,13 @@
 package com.esri.geoevent.adapter.kishou;
 
 import com.esri.ges.adapter.AdapterDefinition;
-import com.esri.ges.adapter.genericJson.JsonInboundAdapter;
+import com.esri.ges.adapter.InboundAdapterBase;
 import com.esri.ges.core.component.ComponentException;
+import com.esri.ges.core.geoevent.FieldException;
+import com.esri.ges.core.geoevent.GeoEvent;
+import com.esri.ges.messaging.MessagingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,12 +33,15 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class KishouInboundAdapter extends JsonInboundAdapter {
+public class KishouInboundAdapter extends InboundAdapterBase {
     static final Log log = LogFactory.getLog(KishouInboundAdapter.class);
     static String region;
     static String infoType;
+    ObjectMapper mapper = new ObjectMapper();
 
     public KishouInboundAdapter(AdapterDefinition adapterDefinition) throws ComponentException {
         super(adapterDefinition);
@@ -49,23 +57,56 @@ public class KishouInboundAdapter extends JsonInboundAdapter {
 //    private Charset otherCharSet = Charset.forName("euc-jp");
     private Charset UTF8 = Charset.forName("UTF8");
 
-    @Override
-    public void receive(ByteBuffer buf, String str) {
-//        トランスポートからバイトバッファを受け取り、デコード
+    public void receive(ByteBuffer buf, String channelId) {
+        // トランスポートからバイトバッファを受け取り、デコード
         ByteBuffer bb = buf;
+        CharSequence charseq = decode(bb);
+        String charseqToString = charseq.toString();
+
+        // デコードしたデータを XMLParser に投げる
+        XmlParser hp = new XmlParser();
+        // パースされたデータを受け取って、エンコードして、ベースクラスのメソッドでジオイベントに変換
+        List<JsonNode> jsonNodes = hp.parseHTML(charseqToString);
+
+        for (JsonNode json : jsonNodes) {
+            bb = encode(json.toString());
+            GeoEvent geoevent = adapt(bb, channelId);
+            geoEventListener.receive(geoevent);
+        }
+    }
+
+    @Override
+    public GeoEvent adapt(ByteBuffer buf, String channelId) {
+        GeoEvent geoevent;
+//        トランスポートからバイトバッファを受け取り、デコード
         CharSequence charseq = decode(buf);
         String charseqToString = charseq.toString();
 
         try {
-//            デコードしたデータを XMLParser に投げる
-            XmlParser hp = new XmlParser();
-//            パースされたデータを受け取って、エンコードして、ベースクラスのメソッドでジオイベントに変換
-            String result = hp.parseHTML(charseqToString);
-            bb = encode(result);
-            super.receive(bb, str);
+            geoevent = geoEventCreator.create(((AdapterDefinition) definition).getGeoEventDefinition("Kishou-XML").getGuid());
+            JsonNode json = mapper.readTree(charseqToString);
+            AtomicInteger index = new AtomicInteger();
+            for (JsonNode element : json) {
+                if (element.isTextual()){
+                    geoevent.setField(index.getAndIncrement(), element.textValue());
+                } else if (element.isInt()){
+                    geoevent.setField(index.getAndIncrement(), element.intValue());
+                } else {
+                    throw new FieldException(element + " is invalid value");
+                }
+            };
+
+            return geoevent;
 
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return null;
+        } catch (FieldException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
