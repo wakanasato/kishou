@@ -60,10 +60,9 @@ public class KishouInboundAdapter extends InboundAdapterBase {
         CharSequence charseq = decode(buf);
         String charseqToString = charseq.toString();
 
-//        デコードしたデータを XMLParser に投げる
-//        パースされたデータを受け取って、GeoEvent オブジェクトに変換して、後続処理に投げる
-        XmlParser hp = new XmlParser();
-        List<JsonNode> jsonNodes = hp.parseXML(charseqToString);
+//        デコードしたデータを XMLParser に投げてパース
+        List<JsonNode> jsonNodes = new XmlParser().parseXML(charseqToString);
+        ;
 //        parsXML メソッドの戻り値は JsonNode のリストのため、ループ処理で単体の JSON を GeoEvent オブジェクトに変換して、receive メソッドに渡すようにする
         for (JsonNode json : jsonNodes) {
             GeoEvent geoevent = convertToGeoEvent(json);
