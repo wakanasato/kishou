@@ -1,0 +1,85 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.esri.geoevent.adapter</groupId>
+    <version>10.7.0</version>
+    <packaging>bundle</packaging>
+    <artifactId>Kishou-adapter</artifactId>
+    <name>Kishou XML Adapter that allows to extract data from multiple Kishou XML Endpoints
+    </name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <repositories>
+        <repository>
+            <id>ages-sdk-repo</id>
+            <name>GeoEvent Processor SDK repository</name>
+            <url>file:///Program Files/ArcGIS/Server/GeoEvent/sdk/repository</url>
+        </repository>
+        <repository>
+            <id>GEP</id>
+            <name>GeoEvent Processor embedded repository</name>
+            <layout>default</layout>
+            <url>file:///Program Files/ArcGIS/Server/GeoEvent/System</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>com.esri.geoevent.sdk</groupId>
+            <artifactId>geoevent-sdk</artifactId>
+            <version>10.7.0</version>
+        </dependency>
+        <dependency>
+            <!-- jsoup HTML parser library @ https://jsoup.org/ -->
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.11.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>3.5.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-ContactAddress>geoeventprocessor@esri.com</Bundle-ContactAddress>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <AGES-Domain>com.esri.geoevent.adapter</AGES-Domain>
+                        <!--Import-Package>*;resolution:=optional</Import-Package  -->
+                        <Export-Package/>
+                        <Private-Package>com.esri.geoevent.adapter.kishou</Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
