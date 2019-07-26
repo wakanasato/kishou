@@ -22,11 +22,9 @@ import com.esri.ges.core.geoevent.FieldException;
 import com.esri.ges.core.geoevent.GeoEvent;
 import com.esri.ges.messaging.MessagingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -41,7 +39,8 @@ public class KishouInboundAdapter extends InboundAdapterBase {
     static final Log log = LogFactory.getLog(KishouInboundAdapter.class);
     static String region;
     static String infoType;
-    ObjectMapper mapper = new ObjectMapper();
+    private Charset UTF8 = Charset.forName("UTF8");
+    //    private Charset otherCharSet = Charset.forName("euc-jp");
 
     public KishouInboundAdapter(AdapterDefinition adapterDefinition) throws ComponentException {
         super(adapterDefinition);
@@ -53,38 +52,32 @@ public class KishouInboundAdapter extends InboundAdapterBase {
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
     }
-//    バイトバッファで受信したイベントをデコード/エンコードする際の文字列を指定
-//    private Charset otherCharSet = Charset.forName("euc-jp");
-    private Charset UTF8 = Charset.forName("UTF8");
 
-    public void receive(ByteBuffer buf, String channelId) {
-        // トランスポートからバイトバッファを受け取り、デコード
-        ByteBuffer bb = buf;
-        CharSequence charseq = decode(bb);
-        String charseqToString = charseq.toString();
-
-        // デコードしたデータを XMLParser に投げる
-        XmlParser hp = new XmlParser();
-        // パースされたデータを受け取って、エンコードして、ベースクラスのメソッドでジオイベントに変換
-        List<JsonNode> jsonNodes = hp.parseHTML(charseqToString);
-
-        for (JsonNode json : jsonNodes) {
-            bb = encode(json.toString());
-            GeoEvent geoevent = adapt(bb, channelId);
-            geoEventListener.receive(geoevent);
-        }
-    }
-
+    //    トランスポートからのメッセージを受け取り、後続処理にメッセージを渡すためのメソッド
     @Override
-    public GeoEvent adapt(ByteBuffer buf, String channelId) {
-        GeoEvent geoevent;
+    public void receive(ByteBuffer buf, String channelId) {
 //        トランスポートからバイトバッファを受け取り、デコード
         CharSequence charseq = decode(buf);
         String charseqToString = charseq.toString();
 
+//        デコードしたデータを XMLParser に投げる
+//        パースされたデータを受け取って、GeoEvent オブジェクトに変換して、後続処理に投げる
+        XmlParser hp = new XmlParser();
+        List<JsonNode> jsonNodes = hp.parseXML(charseqToString);
+//        parsXML メソッドの戻り値は JsonNode のリストのため、ループ処理で単体の JSON を GeoEvent オブジェクトに変換して、receive メソッドに渡すようにする
+        for (JsonNode json : jsonNodes) {
+            GeoEvent geoevent = convertToGeoEvent(json);
+            geoEventListener.receive(geoevent);
+        }
+    }
+
+    //   JsonNode オブジェクトを GeoEvent オブジェクトに変換するためのメソッド
+    public GeoEvent convertToGeoEvent(JsonNode json) {
+        GeoEvent geoevent;
         try {
+//            adapter-definition.xml で定義した GeoEvent 定義を元に GeoEvent オブジェクトを作成
             geoevent = geoEventCreator.create(((AdapterDefinition) definition).getGeoEventDefinition("Kishou-XML").getGuid());
-            JsonNode json = mapper.readTree(charseqToString);
+//            GeoEvent オブジェクトに引数で渡された JSON をセットしていく
             AtomicInteger index = new AtomicInteger();
             for (JsonNode element : json) {
                 if (element.isTextual()){
@@ -95,19 +88,21 @@ public class KishouInboundAdapter extends InboundAdapterBase {
                     throw new FieldException(element + " is invalid value");
                 }
             };
-
             return geoevent;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         } catch (MessagingException e) {
             e.printStackTrace();
             return null;
         } catch (FieldException e) {
             e.printStackTrace();
+            e.getMessage();
             return null;
         }
+    }
+
+    //    継承してるからオーバーライドが必須になっているが、実際は使わないメソッド
+    @Override
+    protected GeoEvent adapt(ByteBuffer byteBuffer, String s) {
+        return null;
     }
 
     private CharSequence decode(ByteBuffer buf) {

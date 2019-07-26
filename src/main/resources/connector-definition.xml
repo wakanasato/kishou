@@ -7,10 +7,10 @@
     <transport uri="com.esri.ges.transport.inbound/HTTP/10.7.1" />
     <properties>
         <shown>
-            <property name="region" label="情報取得区域" default="気象警報・注意報（市町村等）" source="adapter" />
+            <property name="region" label="情報取得区域" default="気象特別警報・警報・注意報" source="adapter"/>
             <property name="clientURL" label="エンドポイントの URL" default="http://www.data.jma.go.jp/developer/xml/feed/extra.xml" source="transport" />
-            <property name="infoType" label="取得情報種" default="気象警報・注意報" source="adapter" />
-            <property name="frequency" label="情報取得頻度" default="30" source="transport" />
+            <property name="infoType" label="取得情報種" default="気象警報・注意報（市町村等）" source="adapter"/>
+            <property name="frequency" label="情報取得頻度(秒)" default="30" source="transport"/>
         </shown>
         <advanced>
         </advanced>

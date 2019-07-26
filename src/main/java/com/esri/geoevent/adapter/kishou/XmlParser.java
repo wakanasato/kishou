@@ -3,14 +3,14 @@ package com.esri.geoevent.adapter.kishou;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
 
 public class XmlParser {
 //  テスト用のメインメソッド
@@ -20,10 +20,11 @@ public class XmlParser {
 //        XML エンドポイントから　Document オブジェクトを作成（parser メソッドで XML としてパース）
         Document doc = Jsoup.connect("http://www.data.jma.go.jp/developer/xml/feed/extra.xml").parser(Parser.xmlParser()).get();
         String xml = doc.toString();
-        p.parseHTML(xml);
+        p.parseXML(xml);
     }
 
-    List<JsonNode> parseHTML(String xml) {
+    //    トランスポートからの XML オブジェクトを受けて、Json オブジェクトを返すメソッド
+    List<JsonNode> parseXML(String xml) {
 ////        System.out.println(System.getProperty("file.encoding"));
 //        String url = "http://www.data.jma.go.jp/developer/xml/feed/extra.xml";
 ////        Jsoup が使う文字コードは実行環境依存みたいなので、ここでちゃんと UTF-8 を使うように指定する (pom に文字コードを記述すれば大丈夫だった)
@@ -33,31 +34,29 @@ public class XmlParser {
         List<JsonNode> jsonNodes = new ArrayList<>();
 
         try {
-//            トランスポートから渡されてデコードされた XML 文字列を Document オブジェクトにパースする
+//            トランスポートから渡されてデコードされた XML 文字列を Document オブジェクトとしてパースする
             Document doc = Jsoup.parse(xml);
-//            アクセスする複数のリンクを抽出（他の情報用にも使えるようにメソッド化）
-//            第二引数は取得したい情報の種類をユーザーに選ばせるようにしたいので、プロパティ化する予定
-            List<String> links = getLinks(doc, "気象特別警報・警報・注意報" /*KishouInboundAdapter.region*/);
+//            アクセスするリンクを抽出（他の情報用にも使えるようにメソッド化）
+//            infoType は GeoEvent Manager で設定した情報種の値
+            List<String> links = getLinks(doc, KishouInboundAdapter.infoType /*"気象特別警報・警報・注意報"*/);
 
-//            抜き出したそれぞれのリンクにアクセスして情報を抜き取っていく
-            for (int i = 0; i < links.size(); i++) {
-                doc = Jsoup.connect(links.get(i)).get();
-
+//            抽出したそれぞれのリンクにアクセスして情報を抜き取っていく
+            for (String link : links) {
+                doc = Jsoup.connect(link).get();
 //                Information type の値毎に取れる値が違うので、ループを回す
-//                実際は Information type をプロパティ化して、どの粒度で情報を取得するかユーザーに選ばせるようにすると思う。
                 Elements infoTypes = doc.getElementsByTag("Information");
-                for (int j = 0; j < infoTypes.size(); j++) {
-                    switch (infoTypes.get(j).attr("type") /*KishouInboundAdapter.region*/) {
+                for (Element infoType : infoTypes) {
+                    switch (infoType.attr("type") /*KishouInboundAdapter.region*/) {
                         case "気象警報・注意報（市町村等）":
 //                            警報の種類でデータを抜き出す（他の Information type でも使えるようにメソッド化）
-                            Elements items = getItems(doc, "気象警報・注意報（市町村等）" /*KishouInboundAdapter.region*/);
+                            Elements items = getItems(doc, KishouInboundAdapter.region /*"気象警報・注意報（市町村等）"*/);
 //                            item タグを一つの XML オブジェクト考えて、ループ処理
 //                            List<Element> items = keihouType.getElementsByTag("item");
-                            for (int k = 0; k < items.size(); k++) {
+                            for (Element item : items) {
 //                                Area タグから regionname と regioncode を抜き出す
-                                Elements area = items.get(k).getElementsByTag("Area");
+                                Elements area = item.getElementsByTag("Area");
 //                                Kind タグから注意報/警報情報を抜き出す
-                                Elements kind = items.get(k).getElementsByTag("Kind");
+                                Elements kind = item.getElementsByTag("Kind");
 //                                値をセットしていく（他の Information type でも使えるようにメソッド化）
                                 setValue(bean, area, kind);
 //                                セットした値を Json にして、Json 配列に追加していく
@@ -75,11 +74,9 @@ public class XmlParser {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        Json オブジェクトの配列を、Adapter に返す
-
-
 //        String result = jsonNodes.toString();
         System.out.println("取得したレコード数は " + jsonNodes.size() + " 件です");
+        //        Json オブジェクトのrリストを、KishouInboundAdapter に返す
         return jsonNodes;
     }
 
@@ -99,9 +96,10 @@ public class XmlParser {
     }
 
     private void setValue(InfoBeans bean, Elements area, Elements kind) {
-
+//        area タグから Areaname をセット
         area.stream().map(element -> element.getElementsByTag("Name"))
                 .forEach(element -> bean.setAreaName(element.text()));
+//        area タグから Regioncode をセット
         area.stream().map(element -> element.getElementsByTag("Code"))
                 .forEach(element -> bean.setRegioncode(element.text()));
 
