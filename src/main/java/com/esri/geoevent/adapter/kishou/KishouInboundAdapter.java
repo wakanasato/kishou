@@ -44,13 +44,13 @@ public class KishouInboundAdapter extends InboundAdapterBase {
 
     public KishouInboundAdapter(AdapterDefinition adapterDefinition) throws ComponentException {
         super(adapterDefinition);
-        region = getProperty("region").getValueAsString();
-        infoType = getProperty("infoType").getValueAsString();
     }
 
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
+        region = getProperty("region").getValueAsString();
+        infoType = getProperty("infoType").getValueAsString();
     }
 
     //    トランスポートからのメッセージを受け取り、後続処理にメッセージを渡すためのメソッド
@@ -75,6 +75,7 @@ public class KishouInboundAdapter extends InboundAdapterBase {
         GeoEvent geoevent;
         try {
 //            adapter-definition.xml で定義した GeoEvent 定義を元に GeoEvent オブジェクトを作成
+//            ジオイベント定義が見つからなかった場合のハンドリング
             geoevent = geoEventCreator.create(((AdapterDefinition) definition).getGeoEventDefinition("Kishou-XML").getGuid());
 //            GeoEvent オブジェクトに引数で渡された JSON をセットしていく
             AtomicInteger index = new AtomicInteger();

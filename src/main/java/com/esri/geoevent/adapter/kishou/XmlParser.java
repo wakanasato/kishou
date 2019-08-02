@@ -18,6 +18,7 @@ public class XmlParser {
 //        System.out.println(System.getProperty("file.encoding"));
         XmlParser p = new XmlParser();
 //        XML エンドポイントから　Document オブジェクトを作成（parser メソッドで XML としてパース）
+//        HTTP通信エラーキャッチ
         Document doc = Jsoup.connect("http://www.data.jma.go.jp/developer/xml/feed/extra.xml").parser(Parser.xmlParser()).get();
         String xml = doc.toString();
         p.parseXML(xml);
@@ -35,6 +36,7 @@ public class XmlParser {
 
         try {
 //            トランスポートから渡されてデコードされた XML 文字列を Document オブジェクトとしてパースする
+            //       XML 文字列をパースするときのエラー処理
             Document doc = Jsoup.parse(xml);
 //            アクセスするリンクを抽出（他の情報用にも使えるようにメソッド化）
 //            infoType は GeoEvent Manager で設定した情報種の値
@@ -42,10 +44,13 @@ public class XmlParser {
 
 //            抽出したそれぞれのリンクにアクセスして情報を抜き取っていく
             for (String link : links) {
+                //        HTTP通信エラーキャッチ (doc の名前を変える)
                 doc = Jsoup.connect(link).get();
 //                Information type の値毎に取れる値が違うので、ループを回す
+//                infoTypes.size() でNull判定
                 Elements infoTypes = doc.getElementsByTag("Information");
                 for (Element infoType : infoTypes) {
+//                    case が存在しない場合のハンドリング
                     switch (infoType.attr("type") /*KishouInboundAdapter.region*/) {
                         case "気象警報・注意報（市町村等）":
 //                            警報の種類でデータを抜き出す（他の Information type でも使えるようにメソッド化）
@@ -60,6 +65,7 @@ public class XmlParser {
 //                                値をセットしていく（他の Information type でも使えるようにメソッド化）
                                 setValue(bean, area, kind);
 //                                セットした値を Json にして、Json 配列に追加していく
+//                                IOException と JsonProcessing Catchしてエラー文
                                 JsonNode json = JsonConverter.toJsonObject(bean);
                                 jsonNodes.add(json);
                             }
@@ -105,7 +111,9 @@ public class XmlParser {
 
 //        各注意報/警報からコードを抽出してセット(正規表現でやっているが、実際は注意報/警報コードでやる)
         for (int i = 0; i < kind.size(); i++) {
+//            文字列判定
             String kindName = kind.get(i).getElementsByTag("Name").text();
+//            数値判定
             int kindCode = Integer.parseInt(kind.get(i).getElementsByTag("Code").text());
             if(kindName.matches("雷.*")){
                 bean.setLightningCode(kindCode);
