@@ -40,7 +40,7 @@ public class XmlParser {
             Document doc = Jsoup.parse(xml);
 //            アクセスするリンクを抽出（他の情報用にも使えるようにメソッド化）
 //            infoType は GeoEvent Manager で設定した情報種の値
-            List<String> links = getLinks(doc, KishouInboundAdapter.infoType /*"気象特別警報・警報・注意報"*/);
+            List<String> links = getLinks(doc, "気象特別警報・警報・注意報");
 
 //            抽出したそれぞれのリンクにアクセスして情報を抜き取っていく
             for (String link : links) {
@@ -54,7 +54,7 @@ public class XmlParser {
                     switch (infoType.attr("type") /*KishouInboundAdapter.region*/) {
                         case "気象警報・注意報（市町村等）":
 //                            警報の種類でデータを抜き出す（他の Information type でも使えるようにメソッド化）
-                            Elements items = getItems(doc, KishouInboundAdapter.region /*"気象警報・注意報（市町村等）"*/);
+                            Elements items = getItems(doc, "気象警報・注意報（市町村等）");
 //                            item タグを一つの XML オブジェクト考えて、ループ処理
 //                            List<Element> items = keihouType.getElementsByTag("item");
                             for (Element item : items) {

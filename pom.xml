@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.esri.geoevent.adapter</groupId>
-    <version>10.7.0</version>
+    <version>10.6.1</version>
     <packaging>bundle</packaging>
     <artifactId>Kishou-adapter</artifactId>
     <name>Kishou XML Adapter that allows to extract data from multiple Kishou XML Endpoints
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.esri.geoevent.sdk</groupId>
             <artifactId>geoevent-sdk</artifactId>
-            <version>10.7.0</version>
+            <version>10.6.1</version>
         </dependency>
         <dependency>
             <!-- jsoup HTML parser library @ https://jsoup.org/ -->

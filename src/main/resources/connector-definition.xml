@@ -3,8 +3,8 @@
         name="esrij-in-kishou" type="inbound">
     <description>気象XML エンドポイントからデータを取得するためのコネクターです</description>
     <defaultName>kishou-xml-in</defaultName>
-    <adapter uri="com.esri.geoevent.adapter.inbound/KishouXML-Adapter/10.7.0"/>
-    <transport uri="com.esri.ges.transport.inbound/HTTP/10.7.1" />
+    <adapter uri="com.esri.geoevent.adapter.inbound/KishouXML-Adapter/10.6.1"/>
+    <transport uri="com.esri.ges.transport.inbound/HTTP/10.6.1"/>
     <properties>
         <shown>
             <property name="region" label="情報取得区域" default="気象特別警報・警報・注意報" source="adapter"/>
