@@ -90,11 +90,12 @@ public class KishouInboundAdapter extends InboundAdapterBase {
             };
             return geoevent;
         } catch (MessagingException e) {
+            log.error(e.getMessage());
             e.printStackTrace();
             return null;
         } catch (FieldException e) {
+            log.error(e.getMessage());
             e.printStackTrace();
-            e.getMessage();
             return null;
         }
     }

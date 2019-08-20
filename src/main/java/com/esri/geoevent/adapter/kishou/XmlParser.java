@@ -1,5 +1,6 @@
 package com.esri.geoevent.adapter.kishou;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,54 +37,79 @@ public class XmlParser {
 
         try {
 //            トランスポートから渡されてデコードされた XML 文字列を Document オブジェクトとしてパースする
-            //       XML 文字列をパースするときのエラー処理
-            Document doc = Jsoup.parse(xml);
+            Document initialDoc = null;
+
+            initialDoc = Jsoup.parse(xml);
+
 //            アクセスするリンクを抽出（他の情報用にも使えるようにメソッド化）
 //            infoType は GeoEvent Manager で設定した情報種の値
-            List<String> links = getLinks(doc, "気象特別警報・警報・注意報");
+            List<String> links = getLinks(initialDoc, "気象特別警報・警報・注意報");
+            if (links.size() > 0) {
+                //            抽出したそれぞれのリンクにアクセスして情報を抜き取っていく
+                for (String link : links) {
+                    Document exDoc = Jsoup.connect(link).get();
 
-//            抽出したそれぞれのリンクにアクセスして情報を抜き取っていく
-            for (String link : links) {
-                //        HTTP通信エラーキャッチ (doc の名前を変える)
-                doc = Jsoup.connect(link).get();
 //                Information type の値毎に取れる値が違うので、ループを回す
 //                infoTypes.size() でNull判定
-                Elements infoTypes = doc.getElementsByTag("Information");
-                for (Element infoType : infoTypes) {
-//                    case が存在しない場合のハンドリング
-                    switch (infoType.attr("type") /*KishouInboundAdapter.region*/) {
-                        case "気象警報・注意報（市町村等）":
+                    Elements infoTypes = exDoc.getElementsByTag("Information");
+                    if (infoTypes.size() > 0) {
+                        for (Element infoType : infoTypes) {
+                            switch (infoType.attr("type") /*KishouInboundAdapter.region*/) {
+                                case "気象警報・注意報（市町村等）":
 //                            警報の種類でデータを抜き出す（他の Information type でも使えるようにメソッド化）
-                            Elements items = getItems(doc, "気象警報・注意報（市町村等）");
+                                    Elements items = getItems(exDoc, "気象警報・注意報（市町村等）");
 //                            item タグを一つの XML オブジェクト考えて、ループ処理
 //                            List<Element> items = keihouType.getElementsByTag("item");
-                            for (Element item : items) {
+                                    if (items.size() > 0) {
+                                        for (Element item : items) {
 //                                Area タグから regionname と regioncode を抜き出す
-                                Elements area = item.getElementsByTag("Area");
+                                            Elements area = item.getElementsByTag("Area");
 //                                Kind タグから注意報/警報情報を抜き出す
-                                Elements kind = item.getElementsByTag("Kind");
+                                            Elements kind = item.getElementsByTag("Kind");
 //                                値をセットしていく（他の Information type でも使えるようにメソッド化）
-                                setValue(bean, area, kind);
+                                            setValue(bean, area, kind);
 //                                セットした値を Json にして、Json 配列に追加していく
-//                                IOException と JsonProcessing Catchしてエラー文
-                                JsonNode json = JsonConverter.toJsonObject(bean);
-                                jsonNodes.add(json);
+                                            JsonNode json = JsonConverter.toJsonObject(bean);
+                                            jsonNodes.add(json);
+                                        }
+                                    } else {
+                                        throw new IllegalArgumentException("Could not get any item from the item tag");
+                                    }
+                                case "気象警報・注意報（警報注意報種別毎）":
+                                case "気象警報・注意報（府県予報区等）":
+                                case "気象警報・注意報（一次細分区域等）":
+                                case "気象警報・注意報（市町村等をまとめた地域等）":
                             }
-                        case "気象警報・注意報（警報注意報種別毎）":
-                        case "気象警報・注意報（府県予報区等）":
-                        case "気象警報・注意報（一次細分区域等）":
-                        case "気象警報・注意報（市町村等をまとめた地域等）":
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Could not get any info from the information tag");
                     }
                 }
+            } else {
+                throw new IllegalArgumentException("Could not get any link");
             }
-
-        } catch (Exception e) {
+        } catch (JsonProcessingException | NullPointerException e) {
+            KishouInboundAdapter.log.error("The input value(s) s null or not formatted correctly");
+            KishouInboundAdapter.log.error(e.getMessage());
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            KishouInboundAdapter.log.error("The input XML is not valid or not supported");
+            KishouInboundAdapter.log.error(e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            KishouInboundAdapter.log.error(e.getMessage());
             e.printStackTrace();
         }
 //        String result = jsonNodes.toString();
         System.out.println("取得したレコード数は " + jsonNodes.size() + " 件です");
         //        Json オブジェクトのrリストを、KishouInboundAdapter に返す
-        return jsonNodes;
+        try {
+            return jsonNodes;
+        } catch (NullPointerException e) {
+            KishouInboundAdapter.log.error("Could not retrieve any data", e);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private List<String> getLinks(Document doc, String type) {
@@ -101,7 +127,7 @@ public class XmlParser {
                 .collect(Collectors.toList()).get(0);
     }
 
-    private void setValue(InfoBeans bean, Elements area, Elements kind) {
+    private void setValue(InfoBeans bean, Elements area, Elements kind) throws UnsupportedOperationException {
 //        area タグから Areaname をセット
         area.stream().map(element -> element.getElementsByTag("Name"))
                 .forEach(element -> bean.setAreaName(element.text()));
@@ -121,7 +147,7 @@ public class XmlParser {
                 bean.setHeavyrainCode(kindCode);
             } else if(kindName.matches("洪水.*")){
                 bean.setFloodCode(kindCode);
-            } else if(kindName.matches("強風.*")){
+            } else if (kindName.matches("暴風.*")) {
                 bean.setStrongwingCode(kindCode);
             } else if(kindName.matches("濃霧.*")){
                 bean.setFlogCode(kindCode);
@@ -132,7 +158,7 @@ public class XmlParser {
                 bean.setFloodCode(00);
                 bean.setFlogCode(00);
             } else {
-                KishouInboundAdapter.log.error(kind.get(i).getElementsByTag("Name").text() + " is not valid");
+                KishouInboundAdapter.log.warn(kind.get(i).getElementsByTag("Name").text() + " is not valid");
             }
         }
     }
