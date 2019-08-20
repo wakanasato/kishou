@@ -89,7 +89,7 @@ public class XmlParser {
                 throw new IllegalArgumentException("Could not get any link");
             }
         } catch (JsonProcessingException | NullPointerException e) {
-            KishouInboundAdapter.log.error("The input value(s) s null or not formatted correctly");
+            KishouInboundAdapter.log.error("The input XML value(s) is null or not formatted correctly");
             KishouInboundAdapter.log.error(e.getMessage());
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
@@ -141,25 +141,97 @@ public class XmlParser {
             String kindName = kind.get(i).getElementsByTag("Name").text();
 //            数値判定
             int kindCode = Integer.parseInt(kind.get(i).getElementsByTag("Code").text());
-            if(kindName.matches("雷.*")){
-                bean.setLightningCode(kindCode);
-            } else if(kindName.matches("大雨.*")){
-                bean.setHeavyrainCode(kindCode);
-            } else if(kindName.matches("洪水.*")){
-                bean.setFloodCode(kindCode);
-            } else if (kindName.matches("暴風.*")) {
-                bean.setStrongwingCode(kindCode);
-            } else if(kindName.matches("濃霧.*")){
-                bean.setFlogCode(kindCode);
-            } else if (kindName.matches("解除")) {
-                bean.setLightningCode(00);
-                bean.setHeavyrainCode(00);
-                bean.setStrongwingCode(00);
-                bean.setFloodCode(00);
-                bean.setFlogCode(00);
-            } else {
-                KishouInboundAdapter.log.warn(kind.get(i).getElementsByTag("Name").text() + " is not valid");
+
+            switch (kindCode) {
+                case 2:
+                    bean.setSnowStrom("暴風雪警報");
+                    break;
+                case 3:
+                    bean.setHeavyRain("大雨警報");
+                    break;
+                case 4:
+                    bean.setFlood("洪水警報");
+                    break;
+                case 5:
+                    bean.setStorm("暴風警報");
+                    break;
+                case 6:
+                    bean.setWave("波浪警報");
+                    break;
+                case 7:
+                    bean.setHeavySnow("大雪警報");
+                    break;
+                case 8:
+                    bean.setTidal("高潮警報");
+                    break;
+                case 10:
+                    bean.setHeavyRain("大雨注意報");
+                    break;
+                case 12:
+                    bean.setHeavySnow("大雪注意報");
+                    break;
+                case 13:
+                    bean.setBlizzard("風雪注意報");
+                    break;
+                case 14:
+                    bean.setLightning("雷注意報");
+                    break;
+                case 15:
+                    bean.setStrongWing("強風注意報");
+                    break;
+                case 16:
+                    bean.setWave("波浪注意報");
+                    break;
+                case 18:
+                    bean.setFlood("洪水注意報");
+                    break;
+                case 19:
+                    bean.setTidal("高潮注意報");
+                    break;
+                case 23:
+                    bean.setLowTemp("低温注意報");
+                    break;
+                case 32:
+                    bean.setBlizzard("暴風雪特別警報");
+                    break;
+                case 33:
+                    bean.setFlood("洪水特別警報");
+                    break;
+                case 35:
+                    bean.setStorm("暴風特別警報");
+                    break;
+                case 36:
+                    bean.setHeavySnow("大雪特別警報");
+                    break;
+                case 37:
+                    bean.setWave("波浪特別警報");
+                    break;
+                case 38:
+                    bean.setTidal("高潮特別警報");
+                    break;
+                default:
+                    KishouInboundAdapter.log.info("Found " + kindName + " code:" + kindCode + " but out of the scope");
             }
+
+//            if(kindName.matches("雷.*")){
+//                bean.setLightningCode(kindCode);
+//            } else if(kindName.matches("大雨.*")){
+//                bean.setHeavyrain(kindCode);
+//            } else if(kindName.matches("洪水.*")){
+//                bean.setFlood(kindCode);
+//            } else if (kindName.matches("暴風.*")) {
+//                bean.setStrongwing(kindCode);
+//            } else if(kindName.matches("濃霧.*")){
+//                bean.setFlog(kindCode);
+//            } else if (kindName.matches("解除")) {
+//                bean.setLightningCode(00);
+//                bean.setHeavyrain(00);
+//                bean.setStrongwing(00);
+//                bean.setFlood(00);
+//                bean.setFlog(00);
+//            } else {
+//                KishouInboundAdapter.log.warn(kind.get(i).getElementsByTag("Name").text() + " is not valid");
+//            }
         }
     }
 

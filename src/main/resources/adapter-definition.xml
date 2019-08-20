@@ -24,11 +24,17 @@
                         <name>TRACK_ID</name>
                     </fieldDefinitionTag>
                 </fieldDefinition>
-                <fieldDefinition name="lightningCode" type="Integer"/>
-                <fieldDefinition name="heavyrainCode" type="Integer"/>
-                <fieldDefinition name="floodCode" type="Integer"/>
-                <fieldDefinition name="strongwingCode" type="Integer"/>
-                <fieldDefinition name="flogCode" type="Integer"/>
+                <fieldDefinition name="lightning" type="String"/>
+                <fieldDefinition name="heavyrain" type="String"/>
+                <fieldDefinition name="flood" type="String"/>
+                <fieldDefinition name="heavySnow" type="String"/>
+                <fieldDefinition name="snowStrom" type="String"/>
+                <fieldDefinition name="blizzard" type="String"/>
+                <fieldDefinition name="strongwing" type="String"/>
+                <fieldDefinition name="storm" type="String"/>
+                <fieldDefinition name="lowTemp" type="String"/>
+                <fieldDefinition name="tidal" type="String"/>
+                <fieldDefinition name="wave" type="String"/>
             </fieldDefinitions>
         </geoEventDefinition>
     </geoEventDefinitions>

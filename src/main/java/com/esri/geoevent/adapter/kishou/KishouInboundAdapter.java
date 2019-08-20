@@ -82,8 +82,8 @@ public class KishouInboundAdapter extends InboundAdapterBase {
             for (JsonNode element : json) {
                 if (element.isTextual()){
                     geoevent.setField(index.getAndIncrement(), element.textValue());
-                } else if (element.isInt()){
-                    geoevent.setField(index.getAndIncrement(), element.intValue());
+                } else if (element.isNull()) {
+                    log.info(geoevent.getField(index.getAndIncrement()) + " is null");
                 } else {
                     throw new FieldException(element + " is invalid value");
                 }
