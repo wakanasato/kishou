@@ -31,8 +31,9 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 
 public class KishouInboundAdapter extends InboundAdapterBase {
@@ -62,7 +63,7 @@ public class KishouInboundAdapter extends InboundAdapterBase {
 
 //        デコードしたデータを XMLParser に投げてパース
         List<JsonNode> jsonNodes = new XmlParser().parseXML(charseqToString);
-        ;
+
 //        parsXML メソッドの戻り値は JsonNode のリストのため、ループ処理で単体の JSON を GeoEvent オブジェクトに変換して、receive メソッドに渡すようにする
         for (JsonNode json : jsonNodes) {
             GeoEvent geoevent = convertToGeoEvent(json);
@@ -78,16 +79,40 @@ public class KishouInboundAdapter extends InboundAdapterBase {
 //            ジオイベント定義が見つからなかった場合のハンドリング
             geoevent = geoEventCreator.create(((AdapterDefinition) definition).getGeoEventDefinition("Kishou-XML").getGuid());
 //            GeoEvent オブジェクトに引数で渡された JSON をセットしていく
-            AtomicInteger index = new AtomicInteger();
-            for (JsonNode element : json) {
-                if (element.isTextual()){
-                    geoevent.setField(index.getAndIncrement(), element.textValue());
-                } else if (element.isNull()) {
-                    log.info(geoevent.getField(index.getAndIncrement()) + " is null");
-                } else {
-                    throw new FieldException(element + " is invalid value");
+
+            StringBuilder warnigs = new StringBuilder();
+            Iterator<Map.Entry<String, JsonNode>> jsonIt = json.fields();
+            while (jsonIt.hasNext()) {
+                Map.Entry<String, JsonNode> jsonElement = jsonIt.next();
+                switch (jsonElement.getKey()) {
+                    case "areaName":
+                        geoevent.setField("areaName", (jsonElement.getValue().textValue()));
+                        break;
+                    case "regioncode":
+                        geoevent.setField("regioncode", jsonElement.getValue().textValue());
+                        break;
+                    case "spAlertFlag":
+                        if (jsonElement.getValue().asBoolean()) {
+                            geoevent.setField("status", "特別警報あり");
+                        }
+                        break;
+                    case "alertFlag":
+                        if (jsonElement.getValue().asBoolean()) {
+                            geoevent.setField("status", "警報あり");
+                        }
+                        break;
+                    case "warningFlag":
+                        if (jsonElement.getValue().asBoolean()) {
+                            geoevent.setField("status", "注意報あり");
+                        }
+                        break;
+                    default:
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
                 }
-            };
+            }
+            geoevent.setField("warnings", warnigs.toString());
+
             return geoevent;
         } catch (MessagingException e) {
             log.error(e.getMessage());

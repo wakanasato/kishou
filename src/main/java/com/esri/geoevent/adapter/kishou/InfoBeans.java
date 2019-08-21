@@ -15,6 +15,9 @@ public class InfoBeans {
     private String lowTemp;
     private String tidal;
     private String wave;
+    private Boolean alertFlag = false;
+    private Boolean warningFlag = false;
+    private Boolean spAlertFlag = false;
 
     public String getAreaName() {
         return areaName;
@@ -120,6 +123,31 @@ public class InfoBeans {
         this.wave = wave;
     }
 
+
+    public Boolean getAlertFlag() {
+        return alertFlag;
+    }
+
+    public void setAlertFlag(Boolean alertFlag) {
+        this.alertFlag = alertFlag;
+    }
+
+    public Boolean getWarningFlag() {
+        return warningFlag;
+    }
+
+    public void setWarningFlag(Boolean warningFlag) {
+        this.warningFlag = warningFlag;
+    }
+
+    public Boolean getSpAlertFlag() {
+        return spAlertFlag;
+    }
+
+    public void setSpAlertFlag(Boolean spAlertFlag) {
+        this.spAlertFlag = spAlertFlag;
+    }
+
     @Override
     public String toString() {
         return "InfoBeans{" +
@@ -136,6 +164,9 @@ public class InfoBeans {
                 ", lowTemp='" + lowTemp + '\'' +
                 ", tidal='" + tidal + '\'' +
                 ", wave='" + wave + '\'' +
+                ", alertFlag=" + alertFlag +
+                ", warningFlag=" + warningFlag +
+                ", spAlertFlag=" + spAlertFlag +
                 '}';
     }
 }
