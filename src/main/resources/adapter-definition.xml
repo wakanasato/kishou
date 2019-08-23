@@ -18,8 +18,8 @@
     <geoEventDefinitions>
         <geoEventDefinition name="Kishou-XML">
             <fieldDefinitions>
-                <fieldDefinition name="areaName" type="String"/>
-                <fieldDefinition name="regioncode" type="String">
+                <fieldDefinition name="region_name" type="String"/>
+                <fieldDefinition name="region_code" type="String">
                     <fieldDefinitionTag>
                         <name>TRACK_ID</name>
                     </fieldDefinitionTag>

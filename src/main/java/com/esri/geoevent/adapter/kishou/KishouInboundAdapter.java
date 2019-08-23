@@ -40,6 +40,8 @@ public class KishouInboundAdapter extends InboundAdapterBase {
     static final Log log = LogFactory.getLog(KishouInboundAdapter.class);
     static String region;
     static String infoType;
+    static String frequency;
+    static String clientURL;
     private Charset UTF8 = Charset.forName("UTF8");
     //    private Charset otherCharSet = Charset.forName("euc-jp");
 
@@ -52,6 +54,8 @@ public class KishouInboundAdapter extends InboundAdapterBase {
         super.afterPropertiesSet();
         region = getProperty("region").getValueAsString();
         infoType = getProperty("infoType").getValueAsString();
+        frequency = getProperty("frequency").getValueAsString();
+        clientURL = getProperty("clientURL").getValueAsString();
     }
 
     //    トランスポートからのメッセージを受け取り、後続処理にメッセージを渡すためのメソッド
@@ -77,32 +81,91 @@ public class KishouInboundAdapter extends InboundAdapterBase {
         try {
 //            adapter-definition.xml で定義した GeoEvent 定義を元に GeoEvent オブジェクトを作成
 //            ジオイベント定義が見つからなかった場合のハンドリング
-            geoevent = geoEventCreator.create(((AdapterDefinition) definition).getGeoEventDefinition("Kishou-XML").getGuid());
+            geoevent = geoEventCreator.create(((AdapterDefinition) definition).getGeoEventDefinition("KishouXML-Input").getGuid());
 //            GeoEvent オブジェクトに引数で渡された JSON をセットしていく
 
             StringBuilder warnigs = new StringBuilder();
             Iterator<Map.Entry<String, JsonNode>> jsonIt = json.fields();
             while (jsonIt.hasNext()) {
                 Map.Entry<String, JsonNode> jsonElement = jsonIt.next();
+                String value = jsonElement.getValue().textValue();
+
                 switch (jsonElement.getKey()) {
-                    case "areaName":
-                        geoevent.setField("areaName", (jsonElement.getValue().textValue()));
+                    case "region_name":
+                        geoevent.setField("region_name", value);
+                        if (!jsonElement.getValue().isNull())
+                            break;
+                    case "region_code":
+                        geoevent.setField("region_code", value);
+                        if (!jsonElement.getValue().isNull())
+                            break;
+                    case "type_lightning":
+                        geoevent.setField("type_lightning", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
                         break;
-                    case "regioncode":
-                        geoevent.setField("regioncode", jsonElement.getValue().textValue());
+                    case "type_heavyRain":
+                        geoevent.setField("type_heavyRain", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_heavySnow":
+                        geoevent.setField("type_heavySnow", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_snowStorm":
+                        geoevent.setField("type_snowStorm", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_blizzard":
+                        geoevent.setField("type_blizzard", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_flood":
+                        geoevent.setField("type_flood", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_strongWing":
+                        geoevent.setField("type_strongWing", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_storm":
+                        geoevent.setField("type_storm", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_lowTemp":
+                        geoevent.setField("type_lowTemp", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_tidal":
+                        geoevent.setField("type_tidal", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
+                        break;
+                    case "type_wave":
+                        geoevent.setField("type_wave", value);
+                        if (!jsonElement.getValue().isNull())
+                            warnigs.append(jsonElement.getValue().textValue() + ", ");
                         break;
                     case "spAlertFlag":
-                        if (jsonElement.getValue().asBoolean()) {
+                        if (jsonElement.getValue().asBoolean() && geoevent.getField("status") == null) {
                             geoevent.setField("status", "特別警報あり");
                         }
                         break;
                     case "alertFlag":
-                        if (jsonElement.getValue().asBoolean()) {
+                        if (jsonElement.getValue().asBoolean() && geoevent.getField("status") == null) {
                             geoevent.setField("status", "警報あり");
                         }
                         break;
                     case "warningFlag":
-                        if (jsonElement.getValue().asBoolean()) {
+                        if (jsonElement.getValue().asBoolean() && geoevent.getField("status") == null) {
                             geoevent.setField("status", "注意報あり");
                         }
                         break;
@@ -111,7 +174,7 @@ public class KishouInboundAdapter extends InboundAdapterBase {
                             warnigs.append(jsonElement.getValue().textValue() + ", ");
                 }
             }
-            geoevent.setField("warnings", warnigs.toString());
+            geoevent.setField("warnings-list", warnigs.toString().substring(0, warnigs.toString().length() - 2));
 
             return geoevent;
         } catch (MessagingException e) {

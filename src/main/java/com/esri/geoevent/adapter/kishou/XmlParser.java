@@ -32,7 +32,6 @@ public class XmlParser {
 ////        Jsoup が使う文字コードは実行環境依存みたいなので、ここでちゃんと UTF-8 を使うように指定する (pom に文字コードを記述すれば大丈夫だった)
 //        Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url);
 
-        InfoBeans bean = new InfoBeans();
         List<JsonNode> jsonNodes = new ArrayList<>();
 
         try {
@@ -67,6 +66,7 @@ public class XmlParser {
 //                                Kind タグから注意報/警報情報を抜き出す
                                             Elements kind = item.getElementsByTag("Kind");
 //                                値をセットしていく（他の Information type でも使えるようにメソッド化）
+                                            InfoBeans bean = new InfoBeans();
                                             setValue(bean, area, kind);
 //                                セットした値を Json にして、Json 配列に追加していく
                                             JsonNode json = JsonConverter.toJsonObject(bean);
@@ -130,10 +130,10 @@ public class XmlParser {
     private void setValue(InfoBeans bean, Elements area, Elements kind) throws UnsupportedOperationException {
 //        area タグから Areaname をセット
         area.stream().map(element -> element.getElementsByTag("Name"))
-                .forEach(element -> bean.setAreaName(element.text()));
+                .forEach(element -> bean.setRegion_name(element.text()));
 //        area タグから Regioncode をセット
         area.stream().map(element -> element.getElementsByTag("Code"))
-                .forEach(element -> bean.setRegioncode(element.text()));
+                .forEach(element -> bean.setRegion_code(element.text()));
 
 //        各注意報/警報からコードを抽出してセット
         for (int i = 0; i < kind.size(); i++) {
@@ -142,91 +142,91 @@ public class XmlParser {
 
             switch (kindCode) {
                 case 2:
-                    bean.setSnowStrom("暴風雪警報");
+                    bean.setType_snowStorm("暴風雪警報");
                     bean.setAlertFlag(true);
                     break;
                 case 3:
-                    bean.setHeavyRain("大雨警報");
+                    bean.setType_heavyRain("大雨警報");
                     bean.setAlertFlag(true);
                     break;
                 case 4:
-                    bean.setFlood("洪水警報");
+                    bean.setType_flood("洪水警報");
                     bean.setAlertFlag(true);
                     break;
                 case 5:
-                    bean.setStorm("暴風警報");
+                    bean.setType_storm("暴風警報");
                     bean.setAlertFlag(true);
                     break;
                 case 6:
-                    bean.setWave("波浪警報");
+                    bean.setType_wave("波浪警報");
                     bean.setAlertFlag(true);
                     break;
                 case 7:
-                    bean.setHeavySnow("大雪警報");
+                    bean.setType_heavySnow("大雪警報");
                     bean.setAlertFlag(true);
                     break;
                 case 8:
-                    bean.setTidal("高潮警報");
+                    bean.setType_tidal("高潮警報");
                     bean.setAlertFlag(true);
                     break;
                 case 10:
-                    bean.setHeavyRain("大雨注意報");
+                    bean.setType_heavyRain("大雨注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 12:
-                    bean.setHeavySnow("大雪注意報");
+                    bean.setType_heavySnow("大雪注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 13:
-                    bean.setBlizzard("風雪注意報");
+                    bean.setType_blizzard("風雪注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 14:
-                    bean.setLightning("雷注意報");
+                    bean.setType_lightning("雷注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 15:
-                    bean.setStrongWing("強風注意報");
+                    bean.setType_strongWind("強風注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 16:
-                    bean.setWave("波浪注意報");
+                    bean.setType_wave("波浪注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 18:
-                    bean.setFlood("洪水注意報");
+                    bean.setType_flood("洪水注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 19:
-                    bean.setTidal("高潮注意報");
+                    bean.setType_tidal("高潮注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 23:
-                    bean.setLowTemp("低温注意報");
+                    bean.setType_lowTemp("低温注意報");
                     bean.setWarningFlag(true);
                     break;
                 case 32:
-                    bean.setBlizzard("暴風雪特別警報");
+                    bean.setType_blizzard("暴風雪特別警報");
                     bean.setSpAlertFlag(true);
                     break;
                 case 33:
-                    bean.setFlood("洪水特別警報");
+                    bean.setType_flood("洪水特別警報");
                     bean.setSpAlertFlag(true);
                     break;
                 case 35:
-                    bean.setStorm("暴風特別警報");
+                    bean.setType_storm("暴風特別警報");
                     bean.setSpAlertFlag(true);
                     break;
                 case 36:
-                    bean.setHeavySnow("大雪特別警報");
+                    bean.setType_heavySnow("大雪特別警報");
                     bean.setSpAlertFlag(true);
                     break;
                 case 37:
-                    bean.setWave("波浪特別警報");
+                    bean.setType_wave("波浪特別警報");
                     bean.setSpAlertFlag(true);
                     break;
                 case 38:
-                    bean.setTidal("高潮特別警報");
+                    bean.setType_tidal("高潮特別警報");
                     bean.setSpAlertFlag(true);
                     break;
                 default:

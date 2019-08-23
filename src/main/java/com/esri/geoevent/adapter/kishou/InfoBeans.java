@@ -1,126 +1,130 @@
 package com.esri.geoevent.adapter.kishou;
 
 public class InfoBeans {
+    //    public InfoBeans(Boolean alertFlag, Boolean warningFlag, Boolean spAlertFlag) {
+//        this.alertFlag = alertFlag;
+//        this.warningFlag = warningFlag;
+//        this.spAlertFlag = spAlertFlag;
+//    }
+    private String region_name;
+    private String region_code;
+    private String type_lightning;
+    private String type_heavyRain;
+    private String type_heavySnow;
+    private String type_snowStorm;
+    private String type_blizzard;
+    private String type_flood;
+    private String type_strongWind;
+    private String type_storm;
+    private String type_lowTemp;
+    private String type_tidal;
+    private String type_wave;
+    private Boolean alertFlag;
+    private Boolean warningFlag;
+    private Boolean spAlertFlag;
 
-    private String areaName;
-    private String regioncode;
-    private String lightning;
-    private String heavyRain;
-    private String heavySnow;
-    private String snowStrom;
-    private String blizzard;
-    private String flood;
-    private String strongWing;
-    private String storm;
-    private String lowTemp;
-    private String tidal;
-    private String wave;
-    private Boolean alertFlag = false;
-    private Boolean warningFlag = false;
-    private Boolean spAlertFlag = false;
-
-    public String getAreaName() {
-        return areaName;
+    public String getRegion_name() {
+        return region_name;
     }
 
-    public void setAreaName(String areaName) {
-        this.areaName = areaName;
+    public void setRegion_name(String region_name) {
+        this.region_name = region_name;
     }
 
-    public String getRegioncode() {
-        return regioncode;
+    public String getRegion_code() {
+        return region_code;
     }
 
-    public void setRegioncode(String regioncode) {
-        this.regioncode = regioncode;
+    public void setRegion_code(String region_code) {
+        this.region_code = region_code;
     }
 
-    public String getLightning() {
-        return lightning;
+    public String getType_lightning() {
+        return type_lightning;
     }
 
-    public void setLightning(String lightning) {
-        this.lightning = lightning;
+    public void setType_lightning(String type_lightning) {
+        this.type_lightning = type_lightning;
     }
 
-    public String getHeavyRain() {
-        return heavyRain;
+    public String getType_heavyRain() {
+        return type_heavyRain;
     }
 
-    public void setHeavyRain(String heavyRain) {
-        this.heavyRain = heavyRain;
+    public void setType_heavyRain(String type_heavyRain) {
+        this.type_heavyRain = type_heavyRain;
     }
 
-    public String getHeavySnow() {
-        return heavySnow;
+    public String getType_heavySnow() {
+        return type_heavySnow;
     }
 
-    public void setHeavySnow(String heavySnow) {
-        this.heavySnow = heavySnow;
+    public void setType_heavySnow(String type_heavySnow) {
+        this.type_heavySnow = type_heavySnow;
     }
 
-    public String getSnowStrom() {
-        return snowStrom;
+    public String getType_snowStorm() {
+        return type_snowStorm;
     }
 
-    public void setSnowStrom(String snowStrom) {
-        this.snowStrom = snowStrom;
+    public void setType_snowStorm(String type_snowStorm) {
+        this.type_snowStorm = type_snowStorm;
     }
 
-    public String getBlizzard() {
-        return blizzard;
+    public String getType_blizzard() {
+        return type_blizzard;
     }
 
-    public void setBlizzard(String blizzard) {
-        this.blizzard = blizzard;
+    public void setType_blizzard(String type_blizzard) {
+        this.type_blizzard = type_blizzard;
     }
 
-    public String getFlood() {
-        return flood;
+    public String getType_flood() {
+        return type_flood;
     }
 
-    public void setFlood(String flood) {
-        this.flood = flood;
+    public void setType_flood(String type_flood) {
+        this.type_flood = type_flood;
     }
 
-    public String getStrongWing() {
-        return strongWing;
+    public String getType_strongWind() {
+        return type_strongWind;
     }
 
-    public void setStrongWing(String strongWing) {
-        this.strongWing = strongWing;
+    public void setType_strongWind(String type_strongWind) {
+        this.type_strongWind = type_strongWind;
     }
 
-    public String getStorm() {
-        return storm;
+    public String getType_storm() {
+        return type_storm;
     }
 
-    public void setStorm(String storm) {
-        this.storm = storm;
+    public void setType_storm(String type_storm) {
+        this.type_storm = type_storm;
     }
 
-    public String getLowTemp() {
-        return lowTemp;
+    public String getType_lowTemp() {
+        return type_lowTemp;
     }
 
-    public void setLowTemp(String lowTemp) {
-        this.lowTemp = lowTemp;
+    public void setType_lowTemp(String type_lowTemp) {
+        this.type_lowTemp = type_lowTemp;
     }
 
-    public String getTidal() {
-        return tidal;
+    public String getType_tidal() {
+        return type_tidal;
     }
 
-    public void setTidal(String tidal) {
-        this.tidal = tidal;
+    public void setType_tidal(String type_tidal) {
+        this.type_tidal = type_tidal;
     }
 
-    public String getWave() {
-        return wave;
+    public String getType_wave() {
+        return type_wave;
     }
 
-    public void setWave(String wave) {
-        this.wave = wave;
+    public void setType_wave(String type_wave) {
+        this.type_wave = type_wave;
     }
 
 
@@ -151,19 +155,19 @@ public class InfoBeans {
     @Override
     public String toString() {
         return "InfoBeans{" +
-                "areaName='" + areaName + '\'' +
-                ", regioncode='" + regioncode + '\'' +
-                ", lightning='" + lightning + '\'' +
-                ", heavyRain='" + heavyRain + '\'' +
-                ", heavySnow='" + heavySnow + '\'' +
-                ", snowStrom='" + snowStrom + '\'' +
-                ", blizzard='" + blizzard + '\'' +
-                ", flood='" + flood + '\'' +
-                ", strongWing='" + strongWing + '\'' +
-                ", storm='" + storm + '\'' +
-                ", lowTemp='" + lowTemp + '\'' +
-                ", tidal='" + tidal + '\'' +
-                ", wave='" + wave + '\'' +
+                "region_name='" + region_name + '\'' +
+                ", region_code='" + region_code + '\'' +
+                ", type_lightning='" + type_lightning + '\'' +
+                ", type_heavyRain='" + type_heavyRain + '\'' +
+                ", type_heavySnow='" + type_heavySnow + '\'' +
+                ", type_snowStorm='" + type_snowStorm + '\'' +
+                ", type_blizzard='" + type_blizzard + '\'' +
+                ", type_flood='" + type_flood + '\'' +
+                ", type_strongWind='" + type_strongWind + '\'' +
+                ", type_storm='" + type_storm + '\'' +
+                ", type_lowTemp='" + type_lowTemp + '\'' +
+                ", type_tidal='" + type_tidal + '\'' +
+                ", type_wave='" + type_wave + '\'' +
                 ", alertFlag=" + alertFlag +
                 ", warningFlag=" + warningFlag +
                 ", spAlertFlag=" + spAlertFlag +
