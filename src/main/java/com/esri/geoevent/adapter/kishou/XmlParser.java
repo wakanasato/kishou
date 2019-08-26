@@ -99,6 +99,9 @@ public class XmlParser {
         } catch (IOException e) {
             KishouInboundAdapter.log.error(e.getMessage());
             e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            KishouInboundAdapter.log.error(e.getMessage());
+            e.printStackTrace();
         }
 //        String result = jsonNodes.toString();
         System.out.println("取得したレコード数は " + jsonNodes.size() + " 件です");
@@ -127,14 +130,7 @@ public class XmlParser {
                 .collect(Collectors.toList()).get(0);
     }
 
-    private void setValue(InfoBeans bean, Elements area, Elements kind) throws UnsupportedOperationException {
-//        area タグから Areaname をセット
-        area.stream().map(element -> element.getElementsByTag("Name"))
-                .forEach(element -> bean.setRegion_name(element.text()));
-//        area タグから Regioncode をセット
-        area.stream().map(element -> element.getElementsByTag("Code"))
-                .forEach(element -> bean.setRegion_code(element.text()));
-
+    private void setValue(InfoBeans bean, Elements area, Elements kind) throws UnsupportedOperationException, IllegalAccessException {
 //        各注意報/警報からコードを抽出してセット
         for (int i = 0; i < kind.size(); i++) {
             String kindName = kind.get(i).getElementsByTag("Name").text();
@@ -229,9 +225,19 @@ public class XmlParser {
                     bean.setType_tidal("高潮特別警報");
                     bean.setSpAlertFlag(true);
                     break;
+                case 0:
+//                    次バージョンでは前の状態をキャッシュするようにして、値があったもの（Null じゃないもの）に対して解除を入れるようにする
+//                    現状は 0 （解除）だった場合は全て Null （何も値をセットしない）
+                    break;
                 default:
                     KishouInboundAdapter.log.info("Found " + kindName + " code:" + kindCode + " but out of the scope");
             }
+            //        area タグから Areaname をセット
+            area.stream().map(element -> element.getElementsByTag("Name"))
+                    .forEach(element -> bean.setRegion_name(element.text()));
+//        area タグから Regioncode をセット
+            area.stream().map(element -> element.getElementsByTag("Code"))
+                    .forEach(element -> bean.setRegion_code(element.text()));
         }
     }
 
