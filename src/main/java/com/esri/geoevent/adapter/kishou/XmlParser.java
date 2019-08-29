@@ -42,7 +42,7 @@ public class XmlParser {
 
 //            アクセスするリンクを抽出（他の情報用にも使えるようにメソッド化）
 //            infoType は GeoEvent Manager で設定した情報種の値
-            List<String> links = getLinks(initialDoc, "気象特別警報・警報・注意報");
+            List<String> links = getLinks(initialDoc, "気象特別警報・警報・注意報" /*KishouInboundAdapter.infoType*/ /*"気象特別警報・警報・注意報"*/);
             if (links.size() > 0) {
                 //            抽出したそれぞれのリンクにアクセスして情報を抜き取っていく
                 for (String link : links) {
@@ -56,7 +56,7 @@ public class XmlParser {
                             switch (infoType.attr("type") /*KishouInboundAdapter.region*/) {
                                 case "気象警報・注意報（市町村等）":
 //                            警報の種類でデータを抜き出す（他の Information type でも使えるようにメソッド化）
-                                    Elements items = getItems(exDoc, "気象警報・注意報（市町村等）");
+                                    Elements items = getItems(exDoc, "気象警報・注意報（市町村等）"/*KishouInboundAdapter.region /*"気象警報・注意報（市町村等）"*/);
 //                            item タグを一つの XML オブジェクト考えて、ループ処理
 //                            List<Element> items = keihouType.getElementsByTag("item");
                                     if (items.size() > 0) {
@@ -138,91 +138,91 @@ public class XmlParser {
 
             switch (kindCode) {
                 case 2:
-                    bean.setType_snowStorm("暴風雪警報");
+                    bean.setType_snowStorm(kindName);
                     bean.setAlertFlag(true);
                     break;
                 case 3:
-                    bean.setType_heavyRain("大雨警報");
+                    bean.setType_heavyRain(kindName);
                     bean.setAlertFlag(true);
                     break;
                 case 4:
-                    bean.setType_flood("洪水警報");
+                    bean.setType_flood(kindName);
                     bean.setAlertFlag(true);
                     break;
                 case 5:
-                    bean.setType_storm("暴風警報");
+                    bean.setType_storm(kindName);
                     bean.setAlertFlag(true);
                     break;
                 case 6:
-                    bean.setType_wave("波浪警報");
+                    bean.setType_wave(kindName);
                     bean.setAlertFlag(true);
                     break;
                 case 7:
-                    bean.setType_heavySnow("大雪警報");
+                    bean.setType_heavySnow(kindName);
                     bean.setAlertFlag(true);
                     break;
                 case 8:
-                    bean.setType_tidal("高潮警報");
+                    bean.setType_tidal(kindName);
                     bean.setAlertFlag(true);
                     break;
                 case 10:
-                    bean.setType_heavyRain("大雨注意報");
+                    bean.setType_heavyRain(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 12:
-                    bean.setType_heavySnow("大雪注意報");
+                    bean.setType_heavySnow(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 13:
-                    bean.setType_blizzard("風雪注意報");
+                    bean.setType_blizzard(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 14:
-                    bean.setType_lightning("雷注意報");
+                    bean.setType_lightning(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 15:
-                    bean.setType_strongWind("強風注意報");
+                    bean.setType_strongWind(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 16:
-                    bean.setType_wave("波浪注意報");
+                    bean.setType_wave(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 18:
-                    bean.setType_flood("洪水注意報");
+                    bean.setType_flood(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 19:
-                    bean.setType_tidal("高潮注意報");
+                    bean.setType_tidal(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 23:
-                    bean.setType_lowTemp("低温注意報");
+                    bean.setType_lowTemp(kindName);
                     bean.setWarningFlag(true);
                     break;
                 case 32:
-                    bean.setType_blizzard("暴風雪特別警報");
+                    bean.setType_blizzard(kindName);
                     bean.setSpAlertFlag(true);
                     break;
                 case 33:
-                    bean.setType_flood("洪水特別警報");
+                    bean.setType_heavyRain(kindName);
                     bean.setSpAlertFlag(true);
                     break;
                 case 35:
-                    bean.setType_storm("暴風特別警報");
+                    bean.setType_storm(kindName);
                     bean.setSpAlertFlag(true);
                     break;
                 case 36:
-                    bean.setType_heavySnow("大雪特別警報");
+                    bean.setType_heavySnow(kindName);
                     bean.setSpAlertFlag(true);
                     break;
                 case 37:
-                    bean.setType_wave("波浪特別警報");
+                    bean.setType_wave(kindName);
                     bean.setSpAlertFlag(true);
                     break;
                 case 38:
-                    bean.setType_tidal("高潮特別警報");
+                    bean.setType_tidal(kindName);
                     bean.setSpAlertFlag(true);
                     break;
                 case 0:
@@ -232,7 +232,7 @@ public class XmlParser {
                 default:
                     KishouInboundAdapter.log.info("Found " + kindName + " code:" + kindCode + " but out of the scope");
             }
-            //        area タグから Areaname をセット
+//        area タグから Areaname をセット
             area.stream().map(element -> element.getElementsByTag("Name"))
                     .forEach(element -> bean.setRegion_name(element.text()));
 //        area タグから Regioncode をセット

@@ -19,9 +19,9 @@ public class InfoBeans {
     private String type_lowTemp;
     private String type_tidal;
     private String type_wave;
+    private Boolean spAlertFlag;
     private Boolean alertFlag;
     private Boolean warningFlag;
-    private Boolean spAlertFlag;
 
     public String getRegion_name() {
         return region_name;
@@ -127,6 +127,13 @@ public class InfoBeans {
         this.type_wave = type_wave;
     }
 
+    public Boolean getSpAlertFlag() {
+        return spAlertFlag;
+    }
+
+    public void setSpAlertFlag(Boolean spAlertFlag) {
+        this.spAlertFlag = spAlertFlag;
+    }
 
     public Boolean getAlertFlag() {
         return alertFlag;
@@ -142,14 +149,6 @@ public class InfoBeans {
 
     public void setWarningFlag(Boolean warningFlag) {
         this.warningFlag = warningFlag;
-    }
-
-    public Boolean getSpAlertFlag() {
-        return spAlertFlag;
-    }
-
-    public void setSpAlertFlag(Boolean spAlertFlag) {
-        this.spAlertFlag = spAlertFlag;
     }
 
 //    public void releaseAll() {
@@ -186,9 +185,9 @@ public class InfoBeans {
                 ", type_lowTemp='" + type_lowTemp + '\'' +
                 ", type_tidal='" + type_tidal + '\'' +
                 ", type_wave='" + type_wave + '\'' +
+                ", spAlertFlag=" + spAlertFlag +
                 ", alertFlag=" + alertFlag +
                 ", warningFlag=" + warningFlag +
-                ", spAlertFlag=" + spAlertFlag +
                 '}';
     }
 }

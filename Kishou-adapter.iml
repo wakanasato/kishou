@@ -7,10 +7,20 @@
           <property key="Bundle-ContactAddress" value="geoeventprocessor@esri.com" />
           <property key="AGES-Domain" value="com.esri.geoevent.adapter" />
           <property key="Private-Package" value="com.esri.geoevent.adapter.kishou" />
+          <property key="Embed-Dependency" value="jsoup" />
           <property key="Bundle-Name" value="Kishou XML Adapter that allows to extract data from multiple Kishou XML Endpoints" />
-          <property key="Include-Resource" value="adapter-definition.xml=$MODULE_DIR$/src/main/resources/adapter-definition.xml,connector-definition.xml=$MODULE_DIR$/src/main/resources/connector-definition.xml,log4j.properties=$MODULE_DIR$/src/main/resources/log4j.properties,OSGI-INF/blueprint/config.xml=$MODULE_DIR$/src/main/resources/OSGI-INF/blueprint/config.xml" />
+          <property key="Bundle-ClassPath" value=".,jsoup-1.11.3.jar" />
+          <property key="Include-Resource" value="jsoup-1.11.3.jar=$MODULE_DIR$/lib/jsoup-1.11.3.jar" />
+          <property key="Embedded-Artifacts" value="jsoup-1.11.3.jar;g=&quot;org.jsoup&quot;;a=&quot;jsoup&quot;;v=&quot;1.11.3&quot;" />
         </additionalProperties>
         <additionalJARContents />
+      </configuration>
+    </facet>
+    <facet type="javaeeApplication" name="javaEEApplication">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="application.xml" url="file://$MODULE_DIR$/META-INF/application.xml" />
+        </descriptors>
       </configuration>
     </facet>
   </component>

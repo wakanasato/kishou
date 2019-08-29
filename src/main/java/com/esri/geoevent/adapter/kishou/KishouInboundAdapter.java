@@ -54,8 +54,6 @@ public class KishouInboundAdapter extends InboundAdapterBase {
         super.afterPropertiesSet();
         region = getProperty("region").getValueAsString();
         infoType = getProperty("infoType").getValueAsString();
-        frequency = getProperty("frequency").getValueAsString();
-        clientURL = getProperty("clientURL").getValueAsString();
     }
 
     //    トランスポートからのメッセージを受け取り、後続処理にメッセージを渡すためのメソッド
@@ -89,7 +87,6 @@ public class KishouInboundAdapter extends InboundAdapterBase {
             while (jsonIt.hasNext()) {
                 Map.Entry<String, JsonNode> jsonElement = jsonIt.next();
                 String value = jsonElement.getValue().textValue();
-
                 switch (jsonElement.getKey()) {
                     case "region_name":
                         geoevent.setField("region_name", value);
@@ -174,8 +171,9 @@ public class KishouInboundAdapter extends InboundAdapterBase {
                             warnigs.append(jsonElement.getValue().textValue() + ", ");
                 }
             }
-            geoevent.setField("warnings-list", warnigs.toString().substring(0, warnigs.toString().length() - 2));
-
+            if (warnigs.length() > 0) {
+                geoevent.setField("warnings-list", warnigs.toString().substring(0, warnigs.toString().length() - 2));
+            }
             return geoevent;
         } catch (MessagingException e) {
             log.error(e.getMessage());

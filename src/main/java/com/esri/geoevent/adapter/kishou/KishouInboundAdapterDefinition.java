@@ -82,10 +82,11 @@ public class KishouInboundAdapterDefinition extends AdapterDefinitionBase {
                     adapterUri, transportUri, "気象XMLコネクター", "気象XMLからデータを取得するコネクターです",
                     AccessType.editable);
 
+            ConnectorProperty url = new ConnectorProperty(ConnectorProperty.Source.transport, "clientURL", "http://www.data.jma.go.jp/developer/xml/feed/extra.xml", "URL");
+            ConnectorProperty frequency = new ConnectorProperty(ConnectorProperty.Source.transport, "frequency", "30", "頻度 (秒)");
             ConnectorProperty region = new ConnectorProperty(ConnectorProperty.Source.adapter, "region", "気象警報・注意報（市町村等）", "地域");
             ConnectorProperty infoType = new ConnectorProperty(ConnectorProperty.Source.adapter, "infoType", "気象特別警報・警報・注意報", "報種");
-            ConnectorProperty url = new ConnectorProperty(ConnectorProperty.Source.transport, "clientURL", "http://www.data.jma.go.jp/developer/xml/feed/extra.xml", "エンドポイントの URL");
-            ConnectorProperty frequency = new ConnectorProperty(ConnectorProperty.Source.transport, "frequency", "20", "情報取得頻度(秒)");
+
 
             newConnector.addShownProperty(region);
             newConnector.addShownProperty(infoType);

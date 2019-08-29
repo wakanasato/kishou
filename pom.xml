@@ -35,7 +35,7 @@
             <artifactId>jsoup</artifactId>
             <version>1.11.3</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/jsoup-1.11.3.jar</systemPath>
+            <systemPath>${basedir}/lib\jsoup-1.11.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -71,6 +71,7 @@
                         <!--Import-Package>*;resolution:=optional</Import-Package  -->
                         <Export-Package/>
                         <Private-Package>com.esri.geoevent.adapter.kishou</Private-Package>
+                        <Embed-Dependency>jsoup</Embed-Dependency>
                     </instructions>
                 </configuration>
             </plugin>
