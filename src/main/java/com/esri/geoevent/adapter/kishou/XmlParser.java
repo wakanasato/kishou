@@ -66,7 +66,7 @@ public class XmlParser {
 //                                Kind タグから注意報/警報情報を抜き出す
                                             Elements kind = item.getElementsByTag("Kind");
 //                                値をセットしていく（他の Information type でも使えるようにメソッド化）
-                                            InfoBeans bean = new InfoBeans();
+                                            InfoBean bean = new InfoBean();
                                             setValue(bean, area, kind);
 //                                セットした値を Json にして、Json 配列に追加していく
                                             JsonNode json = JsonConverter.toJsonObject(bean);
@@ -130,7 +130,7 @@ public class XmlParser {
                 .collect(Collectors.toList()).get(0);
     }
 
-    private void setValue(InfoBeans bean, Elements area, Elements kind) throws UnsupportedOperationException, IllegalAccessException {
+    private void setValue(InfoBean bean, Elements area, Elements kind) throws UnsupportedOperationException, IllegalAccessException {
 //        各注意報/警報からコードを抽出してセット
         for (int i = 0; i < kind.size(); i++) {
             String kindName = kind.get(i).getElementsByTag("Name").text();

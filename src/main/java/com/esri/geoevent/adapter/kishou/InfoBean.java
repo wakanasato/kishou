@@ -1,6 +1,6 @@
 package com.esri.geoevent.adapter.kishou;
 
-public class InfoBeans {
+public class InfoBean {
     //    public InfoBeans(Boolean alertFlag, Boolean warningFlag, Boolean spAlertFlag) {
 //        this.alertFlag = alertFlag;
 //        this.warningFlag = warningFlag;

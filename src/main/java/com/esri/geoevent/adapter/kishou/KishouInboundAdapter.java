@@ -126,8 +126,8 @@ public class KishouInboundAdapter extends InboundAdapterBase {
                         if (!jsonElement.getValue().isNull())
                             warnigs.append(jsonElement.getValue().textValue() + ", ");
                         break;
-                    case "type_strongWing":
-                        geoevent.setField("type_strongWing", value);
+                    case "type_strongWind":
+                        geoevent.setField("type_strongWind", value);
                         if (!jsonElement.getValue().isNull())
                             warnigs.append(jsonElement.getValue().textValue() + ", ");
                         break;
