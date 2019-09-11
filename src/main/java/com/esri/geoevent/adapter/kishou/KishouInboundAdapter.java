@@ -67,9 +67,11 @@ public class KishouInboundAdapter extends InboundAdapterBase {
         List<JsonNode> jsonNodes = new XmlParser().parseXML(charseqToString);
 
 //        parsXML メソッドの戻り値は JsonNode のリストのため、ループ処理で単体の JSON を GeoEvent オブジェクトに変換して、receive メソッドに渡すようにする
-        for (JsonNode json : jsonNodes) {
-            GeoEvent geoevent = convertToGeoEvent(json);
-            geoEventListener.receive(geoevent);
+        if (jsonNodes != null) {
+            for (JsonNode json : jsonNodes) {
+                GeoEvent geoevent = convertToGeoEvent(json);
+                geoEventListener.receive(geoevent);
+            }
         }
     }
 
