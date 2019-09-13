@@ -266,7 +266,6 @@ public static void main(String[] args) {
                     bean.setSpAlertFlag(true);
                     break;
                 case 0:
-                    bean.releaseAll();
                     break;
                 default:
 //                    KishouInboundAdapter.log.info("Found " + kindName + " code:" + kindCode + " but out of the scope");

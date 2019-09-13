@@ -151,22 +151,22 @@ public class InfoBean {
         this.warningFlag = warningFlag;
     }
 
-    public void releaseAll() {
-        setType_lightning("解除");
-        setType_heavyRain("解除");
-        setType_heavySnow("解除");
-        setType_snowStorm("解除");
-        setType_blizzard("解除");
-        setType_flood("解除");
-        setType_strongWind("解除");
-        setType_storm("解除");
-        setType_lowTemp("解除");
-        setType_tidal("解除");
-        setType_wave("解除");
-        setSpAlertFlag(false);
-        setAlertFlag(false);
-        setWarningFlag(false);
-    }
+//    public void releaseAll() {
+//        setType_lightning("解除");
+//        setType_heavyRain("解除");
+//        setType_heavySnow("解除");
+//        setType_snowStorm("解除");
+//        setType_blizzard("解除");
+//        setType_flood("解除");
+//        setType_strongWind("解除");
+//        setType_storm("解除");
+//        setType_lowTemp("解除");
+//        setType_tidal("解除");
+//        setType_wave("解除");
+//        setSpAlertFlag(false);
+//        setAlertFlag(false);
+//        setWarningFlag(false);
+//    }
 
     public String get(int index) {
         switch (index) {
