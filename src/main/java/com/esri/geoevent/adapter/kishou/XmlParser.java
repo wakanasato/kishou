@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class XmlParser {
     //    InfoBean cachedBean = new InfoBean();
-    List<JsonNode> previouJsonNodes = new ArrayList<>();
+    static List<JsonNode> previouJsonNodes = new ArrayList<>();
 
 //  テスト用のメインメソッド
 public static void main(String[] args) {
@@ -34,7 +34,7 @@ public static void main(String[] args) {
             p.parseXML(xml);
         }
     };
-    timer.scheduleAtFixedRate(task, 1000, 30000);
+    timer.scheduleAtFixedRate(task, 1000, 10000);
     }
 
     //    トランスポートからの XML オブジェクトを受けて、Json オブジェクトを返すメソッド
@@ -136,12 +136,16 @@ public static void main(String[] args) {
 //                    }
                 previouJsonNodes = jsonNodes;
                 System.out.println("There is update!!");
+                KishouInboundAdapter.log.info("There is update!!");
+                return jsonNodes;
+            } else if (previouJsonNodes.size() == 0) {
+                System.out.println("Initial records captured");
+                KishouInboundAdapter.log.info("Initial records captured");
+                previouJsonNodes = jsonNodes;
                 return jsonNodes;
             } else {
-                if (previouJsonNodes.size() == 0) {
-                    previouJsonNodes = jsonNodes;
-                }
                 System.out.println("There is no update");
+                KishouInboundAdapter.log.info("Polled but no update found");
                 return null;
             }
         } catch (NullPointerException e) {
