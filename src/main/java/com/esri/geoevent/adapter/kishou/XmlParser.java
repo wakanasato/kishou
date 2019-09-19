@@ -9,20 +9,32 @@ import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class XmlParser {
+    //    InfoBean cachedBean = new InfoBean();
+    static List<JsonNode> previouJsonNodes = new ArrayList<>();
+
 //  テスト用のメインメソッド
-    public static void main(String[] args) throws IOException {
+public static void main(String[] args) {
 //        System.out.println(System.getProperty("file.encoding"));
         XmlParser p = new XmlParser();
-//        XML エンドポイントから　Document オブジェクトを作成（parser メソッドで XML としてパース）
-//        HTTP通信エラーキャッチ
-        Document doc = Jsoup.connect("http://www.data.jma.go.jp/developer/xml/feed/extra.xml").parser(Parser.xmlParser()).get();
-        String xml = doc.toString();
-        p.parseXML(xml);
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+            Document doc = null;
+            try {
+                doc = Jsoup.connect("http://www.data.jma.go.jp/developer/xml/feed/extra.xml").parser(Parser.xmlParser()).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String xml = doc.toString();
+            p.parseXML(xml);
+        }
+    };
+    timer.scheduleAtFixedRate(task, 1000, 10000);
     }
 
     //    トランスポートからの XML オブジェクトを受けて、Json オブジェクトを返すメソッド
@@ -107,7 +119,35 @@ public class XmlParser {
         System.out.println("取得したレコード数は " + jsonNodes.size() + " 件です");
         //        Json オブジェクトのrリストを、KishouInboundAdapter に返す
         try {
-            return jsonNodes;
+//            前回と今回のイベントが同じであるかどうかを判定
+            if (previouJsonNodes.size() != 0 && !Objects.equals(jsonNodes, previouJsonNodes)) {
+//                ここに前回 Null で解除の値が入った場合の処理を足す
+//                for (int i = 0; i < jsonNodes.size(); i++){
+//                    if (jsonNodes.get(i).get("region_code") == previouJsonNodes.get(i).get("region_code")) {
+//                        Iterator<Map.Entry<String, JsonNode>> currentJsonIt = jsonNodes.get(i).fields();
+//                        Iterator<Map.Entry<String, JsonNode>> previousJsonIt = previouJsonNodes.get(i).fields();
+//                        while(currentJsonIt.hasNext()) {
+//                            Map.Entry<String, JsonNode> currentJsonElement = currentJsonIt.next();
+//                            Map.Entry<String, JsonNode> previousJsonElement = previousJsonIt.next();
+//                            if(previousJsonElement.getValue().isNull() && currentJsonElement.getValue().textValue() == "解除"){
+//                                currentJsonElement.setValue(null);
+//                            }
+//                        }
+//                    }
+                previouJsonNodes = jsonNodes;
+                System.out.println("There is update!!");
+                KishouInboundAdapter.log.info("There is update!!");
+                return jsonNodes;
+            } else if (previouJsonNodes.size() == 0) {
+                System.out.println("Initial records captured");
+                KishouInboundAdapter.log.info("Initial records captured");
+                previouJsonNodes = jsonNodes;
+                return jsonNodes;
+            } else {
+                System.out.println("There is no update");
+                KishouInboundAdapter.log.info("Polled but no update found");
+                return null;
+            }
         } catch (NullPointerException e) {
             KishouInboundAdapter.log.error("Could not retrieve any data", e);
             e.printStackTrace();
@@ -226,11 +266,9 @@ public class XmlParser {
                     bean.setSpAlertFlag(true);
                     break;
                 case 0:
-//                    次バージョンでは前の状態をキャッシュするようにして、値があったもの（Null じゃないもの）に対して解除を入れるようにする
-//                    現状は 0 （解除）だった場合は全て Null （何も値をセットしない）
                     break;
                 default:
-                    KishouInboundAdapter.log.info("Found " + kindName + " code:" + kindCode + " but out of the scope");
+//                    KishouInboundAdapter.log.info("Found " + kindName + " code:" + kindCode + " but out of the scope");
             }
 //        area タグから Areaname をセット
             area.stream().map(element -> element.getElementsByTag("Name"))

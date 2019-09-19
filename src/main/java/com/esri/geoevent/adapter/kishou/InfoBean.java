@@ -1,11 +1,6 @@
 package com.esri.geoevent.adapter.kishou;
 
 public class InfoBean {
-    //    public InfoBeans(Boolean alertFlag, Boolean warningFlag, Boolean spAlertFlag) {
-//        this.alertFlag = alertFlag;
-//        this.warningFlag = warningFlag;
-//        this.spAlertFlag = spAlertFlag;
-//    }
     private String region_name;
     private String region_code;
     private String type_lightning;
@@ -23,6 +18,11 @@ public class InfoBean {
     private Boolean alertFlag;
     private Boolean warningFlag;
 
+    public InfoBean() {
+        this.spAlertFlag = false;
+        this.alertFlag = false;
+        this.warningFlag = false;
+    }
     public String getRegion_name() {
         return region_name;
     }
@@ -163,11 +163,68 @@ public class InfoBean {
 //        setType_lowTemp("解除");
 //        setType_tidal("解除");
 //        setType_wave("解除");
-//        setSpAlertFlag(null);
-//        setAlertFlag(null);
-//        setWarningFlag(null);
-//
+//        setSpAlertFlag(false);
+//        setAlertFlag(false);
+//        setWarningFlag(false);
 //    }
+
+    public String get(int index) {
+        switch (index) {
+            case 1:
+                return type_lightning;
+            case 2:
+                return type_heavyRain;
+            case 3:
+                return type_heavySnow;
+            case 4:
+                return type_snowStorm;
+            case 5:
+                return type_blizzard;
+            case 6:
+                return type_flood;
+            case 7:
+                return type_strongWind;
+            case 8:
+                return type_storm;
+            case 9:
+                return type_lowTemp;
+            case 10:
+                return type_tidal;
+            case 11:
+                return type_wave;
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public void set(int Index, String value) {
+        switch (Index) {
+            case 1:
+                type_lightning = value;
+            case 2:
+                type_heavyRain = value;
+            case 3:
+                type_heavySnow = value;
+            case 4:
+                type_snowStorm = value;
+            case 5:
+                type_blizzard = value;
+            case 6:
+                type_flood = value;
+            case 7:
+                type_strongWind = value;
+            case 8:
+                type_storm = value;
+            case 9:
+                type_lowTemp = value;
+            case 10:
+                type_tidal = value;
+            case 11:
+                type_wave = value;
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
 
     @Override
     public String toString() {
